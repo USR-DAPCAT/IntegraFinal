@@ -1,4 +1,8 @@
 #####################################
+#[05.01.2022]#
+#####################################
+
+#####################################
 #30.12.2021
 #####################################
 #29.11.2021
@@ -157,10 +161,10 @@
 #######################################.
 library("plyr")
 library("dplyr")
-library("survminer")
+#library("survminer")
 library("purrr")
 library("stringr")
-library("tidyverse")
+#library("tidyverse")
 library("tidyr")
 library("compareGroups")
 library("rmarkdown")
@@ -182,7 +186,7 @@ library("hablar")
 
 #INTEGRA BBDD JULIO01.07.2019 
 
-setwd("C:/Users/Ramon/Desktop/PROJECTES_2021/IntegraFinal")%>% file.path("FUNCIONS_PROPIES_RAI.r") %>% source()
+#setwd("C:/Users/Ramon/Desktop/PROJECTES_2021/IntegraFinal")%>% file.path("FUNCIONS_PROPIES_RAI.r") %>% source()
 #setwd("C:/Users/Ramon/Desktop/PROJECTES_2021/INTEGRA")%>% file.path("FUNCIONS_PROPIES_RAI.r") %>% source()
 
 
@@ -192,7 +196,7 @@ setwd("C:/Users/Ramon/Desktop/PROJECTES_2021/IntegraFinal")%>% file.path("FUNCIO
 #setwd("C:/Users/Ramon/Desktop/DIMARTS10/INTEGRA_FINAL")
 #"C:/Users/Ramon/Desktop/DIMARTS10/INTEGRA_FINAL"%>% file.path("FUNCIONS_PROPIES_RAI.r") %>% source()
 
-
+#C:\Users\38122893W\Desktop\PROJECTES_2021\IntegraFinal
 
 
 # funcions compartides github
@@ -216,14 +220,19 @@ devtools::source_url(link_source)
 
 
 
+directori_dades="../../DADES/INTEGRA"
 
+
+channel2<-odbcConnectAccess2007(here::here(directori_dades,"INTEGRABBDDJULIO01072019_22.07.2019.accdb"))
+
+#C:\Users\38122893W\Desktop\DADES\INTEGRA
 
 
 #----------------------------------------------------------------------#
 #channel2<-odbcConnectAccess2007("INTEGRABBDDJULIO01072019.accdb")
 #----------------------------------------------------------------------#
 #----------------------------------------------------------------------#
-channel2<-odbcConnectAccess2007("dades/INTEGRABBDDJULIO01072019_22.07.2019.accdb")
+#channel2<-odbcConnectAccess2007("../../DADES/INTEGRA/INTEGRABBDDJULIO01072019_22.07.2019.accdb")
 #----------------------------------------------------------------------#
 
 
@@ -862,6 +871,10 @@ save.image("INTEGRA_PACIENT.Rdata")
 #DT_SEGUIMENT		
 #DT_COMPLICACIONS		
 #DT_COSTOSSANITARIS		
+
+
+
+
 
 
 
