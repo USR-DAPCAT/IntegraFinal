@@ -1,0 +1,209 @@
+---
+title: "Estudio INTEGRA: estrategia de INTervención intEgral en pacientes con mal control Glucémico de la diabetes mellitus tipo 2 en el Ámbito de Atención PRimariA"
+author: "Rai Puig & Jordi Real"
+website: "https://github.com/USR-DAPCAT/"
+
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+
+output:
+  html_document:
+    df_print: paged
+    toc: true
+    toc_float: true
+    fig_caption: true
+    css: logos_css/usr_styles.css
+  pdf_document: default
+  word_document: default
+
+params:
+  dir_dades_origen: "../../DADES/INTEGRA" 
+  dir_dades_desti: "dades"
+---
+&nbsp;
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"https://www.idiapjgol.org/images/logo.png\" style=\"float: right ;width: 130px;\"/>')
+     $head.prepend('<img src=\"https://avatars2.githubusercontent.com/u/57066591?s=200&v=4\" style=\"margin-left:25% ;width: 80px;\"/>')
+     $head.prepend('<img src=\"logos_css/logoDAP_Cat.png\" style=\"float: left:1;width: 185px;\"/>')
+   });
+</script>
+
+
+<div class="watermark">DRAFT</div>
+
+****
+
+## 0. Estat:
+
+**agregacions i part global descriptiva**
+
+
+&check; xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx <br/>
+
+
+Desembre / 2021
+
+&check; xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx <br/>
+
+
+
+ 
+**Pendents**
+
+&check; Revisio i depuracio errors.   <br/>
+
+# Fase de validacio de base
+
+## Fase Preparacio
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, include=F,size="huge")
+
+gc()
+
+library("plyr")
+library("dplyr")
+library("purrr")
+library("stringr")
+library("tidyr")
+library("compareGroups")
+library("rmarkdown")
+library("RODBC")
+library("devtools")
+library("pander")
+library("hablar")
+
+
+
+
+# Funcions 
+link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
+devtools::source_url(link_source)
+
+directori_dades<-params$dir_dades_origen
+
+conductor<-here::here("Integra_Conductor.xls")
+
+
+```
+
+```{r llegir, include = FALSE}
+
+
+#######################################################
+# Llegir plana
+dades_basal<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_BASAL_LAB.rds")) %>% as_tibble()
+dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")) %>% as_tibble()
+
+
+
+# Filtrem  i ELIMINEM els Difunts anteriors al 20
+
+
+
+```
+## 1. Flow chart 
+```{r Flow chart, include=T}
+
+#flow_chart1<-criteris_exclusio_diagrama(dt=dades,
+#                                        taulavariables=conductor,
+#                                        criteris = "exc_pre",
+#                                        ordre="exc_ordre",
+#                                        grups=NA,
+#                                        etiquetes="descripcio1",
+#                                        sequencial = T,
+#                                        pob_lab=c("HTG transversal  ","HTG transversal sense exclusions"),
+#                                        colors=c("white","grey"),
+#                                        forma=c("ellipse","box"))
+
+#flow_chart1
+
+
+#kk<-dades%>%select(idp,situacio,sortida,exclusio1,exclusio2)%>%filter(situacio!="1.   Actiu")
+
+#descrTable(~ situacio+ sortida,
+#           method =1,
+#           data=kk,
+#           include.miss = TRUE,
+#           max.xlev = 200, 
+#           max.ylev = 10,
+#           show.p.overall=FALSE,
+#           show.n = T,
+#           show.all=T,
+#          hide.no="No",simplify=F)%>%export2md(header.background = "grey", header.color = "white", size=12,caption = "comprovació , les dates de SORTIDA,  han de ser superiors al Dindex, quan tenim Situació= Difunt o trasllat")
+
+print("No apliquem les EXCLUSIONS.Ho farem mes endavant")
+
+```
+## 2.1 Descriptiva Basal
+```{r Resultats0, include=T}
+
+#i)
+
+formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
+formu_2<-formula_table1("taula",y="grupIntervencio",taulavariables=conductor,dt=dades_basal)
+
+
+table1::table1(formu_1,
+               data = dades_basal,caption="TAULA 1.Descriptiva BASAL",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+
+```
+
+
+## 2.2 Descriptiva per grupIntervencio Basal
+```{r Resultats1, include=T}
+
+#ii)
+
+
+
+table1::table1(formu_2,
+               data = dades_basal,caption="TAULA 2.Descriptiva Basal per grupIntervencio",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+
+
+
+
+
+
+```
+## 2.3 Descriptiva    General
+```{r Resultats2, include=T}
+
+#iii)
+
+
+table1::table1(formu_1,
+               data = dades,caption="TAULA 1.Descriptiva GENERAL",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min,Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+
+```
+
+
+
+```
+## 4. Salvar taula plana
+```{r salvar}
+#saveRDS(dades, file=here::here(params$dir_dades_desti,"dt_plana_exc.rds"))
+
+```
+&nbsp;
+<hr />
+<p style="text-align: center;">A work by $Jordi Real$ $Rai Puig$ </a></p>
+<p style="text-align: center;">$Llepali System$ </a></p>
+<p style="text-align: center;"><span style="color: #808080;"><em><https://github.com/USR-DAPCAT/></em></span></p>
+
+
+
