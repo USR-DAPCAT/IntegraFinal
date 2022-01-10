@@ -949,14 +949,6 @@ DT_VISITA_BASAL_lab<-etiquetar(d=DT_VISITA_BASAL,taulavariables=conductor)
 DT_VISITA_BASAL_lab<-etiquetar_valors(dt=DT_VISITA_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
 
 
-
-
-
-
-
-
-
-
                           #####################################
                           #V  I S I T A       H I S T O R I C #------------------
                           #####################################
@@ -964,7 +956,7 @@ DT_VISITA_BASAL_lab<-etiquetar_valors(dt=DT_VISITA_BASAL_lab,variables_factors=c
 
 #conductor_variables<-"Integra_Conductor.xls"
 DT_VISITA_HISTORIC_lab<-convertir_dates(d=DT_VISITA_HISTORIC_FINAL,taulavariables=conductor)
-DT_VISITA_HISTORIC_lab<-etiquetar(d=DT_VISITA_HISTORIC_FINAL,taulavariables=conductor)
+DT_VISITA_HISTORIC_lab<-etiquetar(d=DT_VISITA_HISTORIC_lab,taulavariables=conductor)
 DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta1")
 #DT_VISITA_HISTORIC_lab<-LAB_ETIQ_v2(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor_variables2,fulla="etiquetes0",idioma="etiqueta2")
 

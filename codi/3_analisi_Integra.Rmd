@@ -189,9 +189,10 @@ table1::table1(formu_1,
                topclass="Rtable1-zebra")
 
 
-formula_taula_HISTORIC<-formula_compare("taula0",y="grupIntervencio",taulavariables = conductor)
+formula_taula_HISTORIC<-formula_compare("taula0",y="",taulavariables = conductor)
 
-descrTable(formula_taula_HISTORIC,method = 2,Q1 = 0, Q3 =1 ,show.p.overall = F,data=dades,max.xlev = 40)
+descrTable(formula_taula_HISTORIC,method = 2,Q1 = 0, Q3 =1 ,show.p.overall = F,data=dades,max.xlev = 40)%>%
+  export2md(header.background = "grey", header.color = "white", size=12,caption = "TAULA 1.Descriptiva GENERAL")
 
 
 
