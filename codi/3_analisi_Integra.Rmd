@@ -107,34 +107,35 @@ dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")
 ## 1. Flow chart 
 ```{r Flow chart, include=T}
 
-#flow_chart1<-criteris_exclusio_diagrama(dt=dades,
-#                                        taulavariables=conductor,
-#                                        criteris = "exc_pre",
-#                                        ordre="exc_ordre",
-#                                        grups=NA,
-#                                        etiquetes="descripcio1",
-#                                        sequencial = T,
-#                                        pob_lab=c("HTG transversal  ","HTG transversal sense exclusions"),
-#                                        colors=c("white","grey"),
-#                                        forma=c("ellipse","box"))
-
-#flow_chart1
 
 
-#kk<-dades%>%select(idp,situacio,sortida,exclusio1,exclusio2)%>%filter(situacio!="1.   Actiu")
+dades_basal<-dades_basal%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
+dades<-dades%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
 
-#descrTable(~ situacio+ sortida,
-#           method =1,
-#           data=kk,
-#           include.miss = TRUE,
-#           max.xlev = 200, 
-#           max.ylev = 10,
-#           show.p.overall=FALSE,
-#           show.n = T,
-#           show.all=T,
-#          hide.no="No",simplify=F)%>%export2md(header.background = "grey", header.color = "white", size=12,caption = "comprovació , les dates de SORTIDA,  han de ser superiors al Dindex, quan tenim Situació= Difunt o trasllat")
 
-print("No apliquem les EXCLUSIONS.Ho farem mes endavant")
+
+flow_chart1<-criteris_exclusio_diagrama(dt=dades_basal,
+                                        taulavariables=conductor,
+                                        criteris = "exc_pre",
+                                        ordre="exc_ordre",
+                                        grups=NA,
+                                        etiquetes="descripcio",
+                                        sequencial = T,
+                                        pob_lab=c("Estudio INTEGRA  ","Estudio INTEGRA sin exclusiones"),
+                                        colors=c("white","grey"),
+                                        forma=c("ellipse","box"))
+
+flow_chart1
+
+
+dades_basal<-dades_basal%>%filter(exclusio1==0)
+dades<-dades%>%filter(exclusio1==0)
+
+
+#dades_basal<-criteris_exclusio(dades_basal,taulavariables=conductor,criteris="exc_pre")
+#dades<-criteris_exclusio(dades,taulavariables=conductor,criteris="exc_pre")
+
+
 
 ```
 ## 2.1 Descriptiva Basal
