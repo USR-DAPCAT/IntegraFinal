@@ -533,10 +533,10 @@ DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$
 #iii) Crrem DT_VISITA_HISTORIC_BASAL (MES00),a partir de DT_VISITA_HISTORIC filtrada pels pacients.
 
 #---------------##---------------##---------------##---------------##---------------#
-DT_VISITA_HISTORIC_MES00<-DT_VISITA_HISTORIC%>%filter(tipus=="Mes00")
+#DT_VISITA_HISTORIC_MES00<-DT_VISITA_HISTORIC%>%filter(tipus=="Mes00")
 #---------------##---------------##---------------##---------------##---------------#
 
-names(DT_VISITA_HISTORIC_MES00)
+#names(DT_VISITA_HISTORIC_MES00)
 
 #---------------##---------------##---------------##---------------##---------------#  
 # DT_VISITA_HISTORIC_MES00(BASAL,mes00)  i DT_VISITA_HISTORIC(tots els mesos!)
@@ -759,24 +759,24 @@ DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-
 
 
 
-DT_VISITA_BASAL<-DT_VISITA_HISTORIC_MES00%>%left_join(DT_PACIENT   ,by="pacient_id")%>%
-  left_join(DT_DEMOGRAFIA   ,by="visita_id")%>%
-    left_join(DT_HISTORIAMEDICA   ,by="visita_id")%>%
-      left_join(DT_EXPLORACIOFISICA   ,by="visita_id")%>%
-        left_join(DT_MEDICACIO_GENERAL   ,by="visita_id")%>%
-          left_join(DT_MEDICACIO_ADO   ,by="visita_id")%>%
-            left_join(DT_MEDICACIO_INJECTABLES   ,by="visita_id")%>%
-              left_join(DT_ANALITICA   ,by="visita_id")%>%
-                left_join(DT_HABITS_TOXICS   ,by="visita_id")%>%
-                  left_join(DT_SEGUIMENT   ,by="visita_id")%>%
-                    left_join(DT_COMPLICACIONS   ,by="visita_id")%>%
-                      left_join(DT_COSTOSSANITARIS   ,by="visita_id")
+#DT_VISITA_BASAL<-DT_VISITA_HISTORIC_MES00%>%left_join(DT_PACIENT   ,by="pacient_id")%>%
+#  left_join(DT_DEMOGRAFIA   ,by="visita_id")%>%
+#    left_join(DT_HISTORIAMEDICA   ,by="visita_id")%>%
+#      left_join(DT_EXPLORACIOFISICA   ,by="visita_id")%>%
+#        left_join(DT_MEDICACIO_GENERAL   ,by="visita_id")%>%
+#          left_join(DT_MEDICACIO_ADO   ,by="visita_id")%>%
+#            left_join(DT_MEDICACIO_INJECTABLES   ,by="visita_id")%>%
+#              left_join(DT_ANALITICA   ,by="visita_id")%>%
+#                left_join(DT_HABITS_TOXICS   ,by="visita_id")%>%
+#                  left_join(DT_SEGUIMENT   ,by="visita_id")%>%
+#                    left_join(DT_COMPLICACIONS   ,by="visita_id")%>%
+#                      left_join(DT_COSTOSSANITARIS   ,by="visita_id")
   
   
 
 
-names(DT_VISITA_HISTORIC_MES00)
-names(DT_VISITA_BASAL)
+#names(DT_VISITA_HISTORIC_MES00)
+#names(DT_VISITA_BASAL)
 
 
 
@@ -805,6 +805,15 @@ DT_VISITA_HISTORIC_FINAL<-DT_VISITA_HISTORIC%>%left_join(DT_PACIENT   ,by="pacie
                   left_join(DT_SEGUIMENT   ,by="visita_id")%>%
                     left_join(DT_COMPLICACIONS   ,by="visita_id")%>%
                       left_join(DT_COSTOSSANITARIS   ,by="visita_id")
+
+
+DT_VISITA_BASAL<-DT_VISITA_HISTORIC_FINAL%>%filter(tipus=="Mes00")
+DT_VISITA_MES03<-DT_VISITA_HISTORIC_FINAL%>%filter(tipus=="Mes03")
+DT_VISITA_MES06<-DT_VISITA_HISTORIC_FINAL%>%filter(tipus=="Mes06")
+DT_VISITA_FINAL<-DT_VISITA_HISTORIC_FINAL%>%filter(tipus=="Mes00")
+TAULA_PLANA<-DT_VISITA_HISTORIC_FINAL
+
+
 
 
 #DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%left_join(DT_PACIENT   ,by="pacient_id")%>%dplyr::select(-Id)
@@ -905,8 +914,11 @@ DT_VISITA_HISTORIC_FINAL<-DT_VISITA_HISTORIC%>%left_join(DT_PACIENT   ,by="pacie
 #save.image("lectura.Rdata")
 
 
-variable.names(DT_VISITA_BASAL)
-variable.names(DT_VISITA_HISTORIC_FINAL)
+
+
+
+#variable.names(DT_VISITA_BASAL)
+#variable.names(DT_VISITA_HISTORIC_FINAL)
 
 ```
 
@@ -941,23 +953,6 @@ variable.names(DT_VISITA_HISTORIC_FINAL)
 
 
 
-
-
-#conductor_variables<-"Integra_Conductor.xls"
-DT_VISITA_BASAL_lab<-convertir_dates(d=DT_VISITA_BASAL,taulavariables=conductor)
-DT_VISITA_BASAL_lab<-etiquetar(d=DT_VISITA_BASAL,taulavariables=conductor)
-DT_VISITA_BASAL_lab<-etiquetar_valors(dt=DT_VISITA_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
-
-
-                          #####################################
-                          #V  I S I T A       H I S T O R I C #------------------
-                          #####################################
-
-
-#conductor_variables<-"Integra_Conductor.xls"
-DT_VISITA_HISTORIC_lab<-convertir_dates(d=DT_VISITA_HISTORIC_FINAL,taulavariables=conductor)
-DT_VISITA_HISTORIC_lab<-etiquetar(d=DT_VISITA_HISTORIC_lab,taulavariables=conductor)
-DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta1")
 #DT_VISITA_HISTORIC_lab<-LAB_ETIQ_v2(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor_variables2,fulla="etiquetes0",idioma="etiqueta2")
 
 
@@ -1013,9 +1008,9 @@ DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_fac
 
 
 
-TAULA_PLANA_BASAL_LAB<-DT_VISITA_BASAL_lab
-TAULA_PLANA_HISTORIC_LAB<-DT_VISITA_HISTORIC_lab
-TAULA_PLANA<-DT_VISITA_HISTORIC_FINAL
+#TAULA_PLANA_BASAL_LAB<-DT_VISITA_BASAL_lab
+#TAULA_PLANA_HISTORIC_LAB<-DT_VISITA_HISTORIC_lab
+
 
 
 
@@ -1036,9 +1031,19 @@ TAULA_PLANA<-DT_VISITA_HISTORIC_FINAL
 #TAULA_PLANA_lab
 
 
-saveRDS(TAULA_PLANA_BASAL_LAB, file=here::here(params$dir_dades_desti,"TAULA_PLANA_BASAL_LAB.rds"))
-saveRDS(TAULA_PLANA_HISTORIC_LAB, file=here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds"))
-saveRDS(TAULA_PLANA, file=here::here(params$dir_dades_desti,"TAULA_PLANA.rds"))
+#saveRDS(TAULA_PLANA_BASAL_LAB, file=here::here(params$dir_dades_desti,"TAULA_PLANA_BASAL_LAB.rds"))
+#saveRDS(TAULA_PLANA_HISTORIC_LAB, file=here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds"))
+#saveRDS(TAULA_PLANA, file=here::here(params$dir_dades_desti,"TAULA_PLANA.rds"))
+
+#DT_VISITA_BASAL
+
+saveRDS(DT_VISITA_BASAL, file=here::here(params$dir_dades_desti,"DT_VISITA_BASAL.rds"))
+saveRDS(DT_VISITA_MES03, file=here::here(params$dir_dades_desti,"DT_VISITA_MES03.rds"))
+saveRDS(DT_VISITA_MES06, file=here::here(params$dir_dades_desti,"DT_VISITA_MES06.rds"))
+saveRDS(DT_VISITA_FINAL, file=here::here(params$dir_dades_desti,"DT_VISITA_FINAL.rds"))
+saveRDS(TAULA_PLANA,     file=here::here(params$dir_dades_desti,"TAULA_PLANA.rds"))
+
+
 
 
 ```

@@ -94,10 +94,15 @@ conductor<-here::here("Integra_Conductor.xls")
 
 #######################################################
 # Llegir plana
-dades_basal<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_BASAL_LAB.rds")) %>% as_tibble()
-dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")) %>% as_tibble()
+#dades_basal<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_BASAL_LAB.rds")) %>% as_tibble()
+#dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")) %>% as_tibble()
 
 
+dades_basal<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_BASAL.rds")) %>% as_tibble()
+dades_MES03<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_MES03.rds")) %>% as_tibble()
+dades_MES06<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_MES06.rds")) %>% as_tibble()
+dades_final<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_FINAL.rds")) %>% as_tibble()
+dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibble()
 
 # Filtrem  i ELIMINEM els Difunts anteriors al 20
 
@@ -110,7 +115,7 @@ dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")
 
 
 dades_basal<-dades_basal%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
-dades<-dades%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
+#dades<-dades%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
 
 
 
@@ -128,8 +133,20 @@ flow_chart1<-criteris_exclusio_diagrama(dt=dades_basal,
 flow_chart1
 
 
+
+#DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
+
+
 dades_basal<-dades_basal%>%filter(exclusio1==0)
-dades<-dades%>%filter(exclusio1==0)
+#dades<-dades%>%filter(exclusio1==0)
+dades_basal_SELECT<-dades_basal%>%dplyr::select(pacient_id)
+
+
+dades_MES03<-dades_MES03%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
+dades_MES06<-dades_MES06%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
+dades_final<-dades_final%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
+dades<-dades%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
+
 
 
 #dades_basal<-criteris_exclusio(dades_basal,taulavariables=conductor,criteris="exc_pre")
@@ -138,10 +155,46 @@ dades<-dades%>%filter(exclusio1==0)
 
 
 ```
+
+
+```{r recodes}
+#conductor_variables<-"Integra_Conductor.xls"
+DT_VISITA_BASAL_lab<-convertir_dates(d=dades_basal,taulavariables=conductor)
+DT_VISITA_BASAL_lab<-etiquetar(d=DT_VISITA_BASAL_lab,taulavariables=conductor)
+
+
+
+DT_VISITA_BASAL_lab<-etiquetar_valors(dt=DT_VISITA_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+
+
+# CAmbiar categoria de referencia
+DT_VISITA_BASAL_lab<-DT_VISITA_BASAL_lab %>% refcat(conductor = conductor,ref = "refcat")
+
+
+                        #####################################
+                          #V  I S I T A       H I S T O R I C #------------------
+                          #####################################
+
+# 
+# #conductor_variables<-"Integra_Conductor.xls"
+# DT_VISITA_HISTORIC_lab<-convertir_dates(d=DT_VISITA_HISTORIC_FINAL,taulavariables=conductor)
+# DT_VISITA_HISTORIC_lab<-etiquetar(d=DT_VISITA_HISTORIC_lab,taulavariables=conductor)
+# DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta1")
+
+
+```
+
+
+
 ## 2.1 Descriptiva Basal
 ```{r Resultats0, include=T}
 
 #i)
+
+
+
+
+
 
 formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
 formu_2<-formula_table1("taula",y="grupIntervencio",taulavariables=conductor,dt=dades_basal)
@@ -156,6 +209,72 @@ table1::table1(formu_1,
 
 ```
 
+```{r}
+
+dades_basal %>% select(centre_id)
+
+table1::table1(~ centre_id  | grupIntervencio,
+               data = DT_VISITA_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+```
+
+## Analisis de l'outcome (Change from baseline in HbA1c)
+
+```{r}
+
+DT_VISITA_BASAL_lab %>% select(hba1cNGSP)
+
+dades_final
+dades_MES03
+dades_MES06
+
+dt_temp<-
+  dades %>% 
+  select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>% 
+  arrange(pacient_id) %>% 
+  na.omit()
+
+
+dt_temp
+
+  
+```
+
+# Analisis de achiving the HbA1c < 7% target
+
+```{r}
+
+## Reg logistica condicional
+dt_temp<-
+  DT_VISITA_BASAL_lab %>% 
+  left_join(
+    
+    dades %>% filter(tipus=="Mes12") %>% 
+      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
+    by="pacient_id"
+    
+  )
+
+dt_temp<-
+  dt_temp %>% 
+  # select(pacient_id,centre_id,grupIntervencio,hba1cNGSP,hba1cNGSP_final) %>% 
+  # na.omit() %>% 
+  mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
+
+
+dt_temp %>% select(edat,sexe_id)
+
+
+glm(hba1cNGSP_7~grupIntervencio+hba1cNGSP+edat+sexe_id+imc + hta_id + dislipemia_id + duracioDiabetesMesos2
+    ,family = "binomial",data = dt_temp) %>% 
+  parameters::parameters(exp=T)
+
+table(dt_temp$hta_id)
+
+```
 
 ## 2.2 Descriptiva per grupIntervencio Basal
 ```{r Resultats1, include=T}
