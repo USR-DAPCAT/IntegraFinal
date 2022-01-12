@@ -16,7 +16,6 @@ output:
   word_document: default
 
 params:
-  dir_dades_origen: "../../DADES/INTEGRA" 
   dir_dades_desti: "dades"
 ---
 &nbsp;
@@ -98,13 +97,13 @@ conductor<-here::here("Integra_Conductor.xls")
 #dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA_HISTORIC_LAB.rds")) %>% as_tibble()
 
 
-dades_basal<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_BASAL.rds")) %>% as_tibble()
-dades_MES03<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_MES03.rds")) %>% as_tibble()
-dades_MES06<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_MES06.rds")) %>% as_tibble()
-dades_final<-readRDS(here::here(params$dir_dades_desti,"DT_VISITA_FINAL.rds")) %>% as_tibble()
+
 dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibble()
 
-# Filtrem  i ELIMINEM els Difunts anteriors al 20
+dades_BASAL<-dades%>%filter(tipus=="Mes00")
+dades_MES03<-dades%>%filter(tipus=="Mes03")
+dades_MES06<-dades%>%filter(tipus=="Mes06")
+dades_FINAL<-dades%>%filter(tipus=="Mes00")
 
 
 
@@ -114,12 +113,12 @@ dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibb
 
 
 
-dades_basal<-dades_basal%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
+dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
 #dades<-dades%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
 
 
 
-flow_chart1<-criteris_exclusio_diagrama(dt=dades_basal,
+flow_chart1<-criteris_exclusio_diagrama(dt=dades_BASAL,
                                         taulavariables=conductor,
                                         criteris = "exc_pre",
                                         ordre="exc_ordre",
@@ -137,20 +136,21 @@ flow_chart1
 #DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
 
 
-dades_basal<-dades_basal%>%filter(exclusio1==0)
-#dades<-dades%>%filter(exclusio1==0)
-dades_basal_SELECT<-dades_basal%>%dplyr::select(pacient_id)
+dades_BASAL<-dades_BASAL%>%filter(exclusio1==0)
 
 
-dades_MES03<-dades_MES03%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
-dades_MES06<-dades_MES06%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
-dades_final<-dades_final%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
-dades<-dades%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
+#filtrem les altres base de dades!
 
 
+dades_BASAL_SELECT<-dades_BASAL%>%dplyr::select(pacient_id)
 
-#dades_basal<-criteris_exclusio(dades_basal,taulavariables=conductor,criteris="exc_pre")
-#dades<-criteris_exclusio(dades,taulavariables=conductor,criteris="exc_pre")
+
+dades_MES03<-dades_MES03%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+dades_MES06<-dades_MES06%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+dades_FINAL<-dades_FINAL%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+
+
 
 
 
@@ -159,16 +159,16 @@ dades<-dades%>%filter(pacient_id%in%dades_basal_SELECT$pacient_id)
 
 ```{r recodes}
 #conductor_variables<-"Integra_Conductor.xls"
-DT_VISITA_BASAL_lab<-convertir_dates(d=dades_basal,taulavariables=conductor)
-DT_VISITA_BASAL_lab<-etiquetar(d=DT_VISITA_BASAL_lab,taulavariables=conductor)
 
 
 
-DT_VISITA_BASAL_lab<-etiquetar_valors(dt=DT_VISITA_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+dades_BASAL_lab<-convertir_dates(d=dades_BASAL,taulavariables=conductor)
+dades_BASAL_lab<-etiquetar(d=dades_BASAL_lab,taulavariables=conductor)
+dades_BASAL_lab<-etiquetar_valors(dt=dades_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
 
 
 # CAmbiar categoria de referencia
-DT_VISITA_BASAL_lab<-DT_VISITA_BASAL_lab %>% refcat(conductor = conductor,ref = "refcat")
+dades_BASAL_lab<-dades_BASAL_lab %>% refcat(conductor = conductor,ref = "refcat")
 
 
                         #####################################
@@ -186,22 +186,18 @@ DT_VISITA_BASAL_lab<-DT_VISITA_BASAL_lab %>% refcat(conductor = conductor,ref = 
 
 
 
-## 2.1 Descriptiva Basal
+## 2. Descriptiva Basal
 ```{r Resultats0, include=T}
 
 #i)
 
 
+#formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
+formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL_lab)
 
 
-
-
-formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
-formu_2<-formula_table1("taula",y="grupIntervencio",taulavariables=conductor,dt=dades_basal)
-
-
-table1::table1(formu_1,
-               data = dades_basal,caption="TAULA 1.Descriptiva BASAL",
+table1::table1(formu_2,
+               data = dades_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
@@ -209,27 +205,27 @@ table1::table1(formu_1,
 
 ```
 
-```{r}
+```{r Resultats1, include=T}
 
-dades_basal %>% select(centre_id)
+#dades_BASAL_lab %>% select(centre_id)
 
 table1::table1(~ centre_id  | grupIntervencio,
-               data = DT_VISITA_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
+               data = dades_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
 ```
 
-## Analisis de l'outcome (Change from baseline in HbA1c)
+## 3. Analisis de l'outcome (Change from baseline in HbA1c)
 
-```{r}
+```{r Resultats2, include=T}
 
-DT_VISITA_BASAL_lab %>% select(hba1cNGSP)
+#dades_BASAL_lab %>% select(hba1cNGSP)
 
-dades_final
-dades_MES03
-dades_MES06
+#dades_final
+#dades_MES03
+#dades_MES06
 
 dt_temp<-
   dades %>% 
@@ -238,18 +234,18 @@ dt_temp<-
   na.omit()
 
 
-dt_temp
+#dt_temp
 
   
 ```
 
 # Analisis de achiving the HbA1c < 7% target
 
-```{r}
+```{r Resultats3, include=T}
 
 ## Reg logistica condicional
 dt_temp<-
-  DT_VISITA_BASAL_lab %>% 
+  dades_BASAL_lab %>% 
   left_join(
     
     dades %>% filter(tipus=="Mes12") %>% 
@@ -265,29 +261,29 @@ dt_temp<-
   mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
 
 
-dt_temp %>% select(edat,sexe_id)
+#dt_temp %>% select(edat,sexe_id)
 
 
-glm(hba1cNGSP_7~grupIntervencio+hba1cNGSP+edat+sexe_id+imc + hta_id + dislipemia_id + duracioDiabetesMesos2
+glm(hba1cNGSP_7~grupIntervencio+hba1cNGSP+edat+sexe_id+imc + duracioDiabetesMesos2
     ,family = "binomial",data = dt_temp) %>% 
   parameters::parameters(exp=T)
 
-table(dt_temp$hta_id)
+#table(dt_temp$hta_id)
 
 ```
 
 ## 2.2 Descriptiva per grupIntervencio Basal
-```{r Resultats1, include=T}
+```{r Resultats4, include=T}
 
 #ii)
 
 
 
-table1::table1(formu_2,
-               data = dades_basal,caption="TAULA 2.Descriptiva Basal per grupIntervencio",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
+#table1::table1(formu_2,
+#               data = dades_basal,caption="TAULA 2.Descriptiva Basal per grupIntervencio",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
 
 
 
@@ -297,22 +293,22 @@ table1::table1(formu_2,
 
 ```
 ## 2.3 Descriptiva    General
-```{r Resultats2, include=T}
+```{r Resultats5, include=T}
 
 #iii)
 
 
-table1::table1(formu_1,
-               data = dades,caption="TAULA 1.Descriptiva GENERAL",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min,Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
+#table1::table1(formu_1,
+#               data = dades,caption="TAULA 1.Descriptiva GENERAL",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min,Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
 
 
-formula_taula_HISTORIC<-formula_compare("taula0",y="",taulavariables = conductor)
+#formula_taula_HISTORIC<-formula_compare("taula0",y="",taulavariables = conductor)
 
-descrTable(formula_taula_HISTORIC,method = 2,Q1 = 0, Q3 =1 ,show.p.overall = F,data=dades,max.xlev = 40)%>%
-  export2md(header.background = "grey", header.color = "white", size=12,caption = "TAULA 1.Descriptiva GENERAL")
+#descrTable(formula_taula_HISTORIC,method = 2,Q1 = 0, Q3 =1 ,show.p.overall = F,data=dades,max.xlev = 40)%>%
+#  export2md(header.background = "grey", header.color = "white", size=12,caption = "TAULA 1.Descriptiva GENERAL")
 
 
 
