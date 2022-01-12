@@ -1,5 +1,5 @@
 ############
-#11.01.2022#
+#12.01.2022#
 #
 #
 # -------------------------   PARAMETRES  --------------------------------------------------------
@@ -7,7 +7,7 @@ gc()
 rm(list=ls())
 dir_dades_origen="../../DADES/INTEGRA" 
 dir_dades_desti="dades"
-nom_output="Poblacio"
+nom_output="INTEGRA"
 save.image("codi/params.Rdata")
 # -----------------------------------------------------------
 
@@ -20,7 +20,7 @@ load("codi/params.Rdata")
 
 #--------------------------------------------------------------------------------------------------# 
 rmarkdown::render(input="./codi/1_lectura_Integra.RMD",
-                  output_file=paste0(here::here("resultats/Informe_Lectura_INTEGRA_"),nom_output,"_",Sys.Date()),
+                  output_file=paste0(here::here("resultats/Informe_Lectura_"),nom_output,"_",Sys.Date()),
                   params = list(dir_dades_desti=dir_dades_desti ,dir_dades_origen=dir_dades_origen))
 #--------------------------------------------------------------------------------------------------#
 #---------------------------  PREPARACIO ----------------------------------------------------------#
@@ -30,10 +30,10 @@ gc()
 load("codi/params.Rdata")
 #--------------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------------#
-#rmarkdown::render(input="./codi/2_preparacio_HTG.RMD",
-#                  output_file=paste0(here::here("resultats/Informe_preparcio_HTG_"),nom_output,Sys.Date()),
-#                  params = list(dir_dades_desti=dir_dades_desti))
-#
+rmarkdown::render(input="./codi/2_preparacio_Integra.RMD",
+                  output_file=paste0(here::here("resultats/Informe_preparacio_"),nom_output,Sys.Date()),
+                  params = list(dir_dades_desti=dir_dades_desti))
+
 #--------------------------------------------------------------------------------------------------#
 #---------------------------  ANALISI -------------------------------------------------------------#
 library("dplyr")
@@ -43,7 +43,7 @@ load("codi/params.Rdata")
 #--------------------------------------------------------------------------------------------------#
 #--------------------------------------------------------------------------------------------------#
 rmarkdown::render(input="./codi/3_analisi_Integra.RMD",
-                  output_file=paste0(here::here("resultats/Informe_Exploratori_INTEGRA_"),"_",nom_output,"_",Sys.Date()),
+                  output_file=paste0(here::here("resultats/Informe_Exploratori_"),"_",nom_output,"_",Sys.Date()),
                   params = list(dir_dades_desti=dir_dades_desti))
 #--------------------------------------------------------------------------------------------------#
 

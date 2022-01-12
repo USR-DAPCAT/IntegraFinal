@@ -17,7 +17,7 @@ output:
   word_document: default
 
 params:
-  dir_dades_origen: "../../DADES/INTEGRA" 
+  dir_dades_desti: "dades"
 ---
 
 &nbsp;
@@ -74,20 +74,23 @@ directori_dades<-params$dir_dades_origen
 #channel2<-odbcConnectAccess2007("dades/INTEGRABBDDJULIO01072019_22.07.2019.accdb")
 #----------------------------------------------------------------------#
 
-
-
-
-
-
-
+TAULA_PLANA<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibble()
 
 ```
 
 
 
-## 3. Fusió de dades
-```{r fusio_taulaPlana}
+## Recodificacions i calculs
+```{r recodificacions1,include=F}
 
+
+#TAULA_PLANA$duracioDiabetesMesos
+
+TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos=if_na(duracioDiabetesMesos,0))
+TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos2=duracioDiabetesAnys*12+duracioDiabetesMesos)
+TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesAnys2=duracioDiabetesMesos2/12)
+
+#TAULA_PLANA$duracioDiabetesMesos2
 
 
 ```
@@ -96,8 +99,8 @@ directori_dades<-params$dir_dades_origen
 ## 4. Salvar taula plana 
 ```{r salvar}
 
-#save(TAULA_PLANA,CVD
-#     ,file=here::here("COVID1.Rdata"))
+saveRDS(TAULA_PLANA,     file=here::here(params$dir_dades_desti,"TAULA_PLANA.rds"))
+
 
 
 ```
