@@ -98,8 +98,9 @@ TAULA_PLANA$tensioSistolica<-as.numeric(TAULA_PLANA$tensioSistolica)
 TAULA_PLANA$hba1cIFCC<-as.numeric(TAULA_PLANA$hba1cIFCC)
 TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
 
-#TAULA_PLANA<-mutate_at(TAULA_PLANA, vars( starts_with("ado") ), funs( if_else(.=="---"   ,0,1)))
 
+#TAULA_PLANA<-mutate_at(TAULA_PLANA, vars( starts_with("ado") ), funs( if_else(.=="---"   ,0,1)))
+#
 #TAULA_PLANA<-TAULA_PLANA %>% mutate(
 #     GRUP_DIABETIC_CAT2 = case_when(
 #          DM1==1 ~ 1,
@@ -107,26 +108,278 @@ TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
 #          G_DIABETIC==1 ~ 3,
 #          TRUE ~ 0
 #     ))
+################################
+#1
+#edat 
+#2
+#sexe_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    sexe_id = case_when(sexe_id=="Mujer" ~ "Mujer",
+                                   sexe_id=="Hombre" ~ "Hombre",
+                                   TRUE ~ NA_character_))
+#3
+#fumador_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    fumador_id = case_when(fumador_id=="Ex-fumador" ~ "Ex-fumador",
+                           fumador_id=="Fumador" ~ "Fumador",
+                           fumador_id=="No fumador" ~ "No fumador",
+                           
+                                   TRUE ~ NA_character_))
 
 
+
+
+#4
+#etnia_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    etnia_id = case_when(etnia_id=="Africana" ~ "Africana",
+                         etnia_id=="Asiática" ~ "Asiática",
+                         etnia_id=="Caucásica" ~ "Caucásica",
+                         etnia_id=="Hispanoamericana" ~ "Hispanoamericana",
+                         etnia_id=="Indostani" ~ "Indostani",
+                                   TRUE ~ NA_character_))
+#5         
+#duracioDiabetesMesos2
+#5          
+#duracioDiabetesAnys2  
+#6
+#imc                                       
+#7          
+#tensioDiastolica                          
+#8  
+#tensioSistolica 
+#9        
+#hba1cIFCC                                
+#10                           
+#hba1cNGSP          
+
+#11          
+#hta_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    hta_id = case_when(hta_id=="No" ~ "No",
+                                   hta_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#12
+#dislipemia_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    dislipemia_id = case_when(dislipemia_id=="No" ~ "No",
+                                   dislipemia_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#13         
+#insuficienciaCardiaca_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    insuficienciaCardiaca_id = case_when(insuficienciaCardiaca_id=="No" ~ "No",
+                                   insuficienciaCardiaca_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#14          
+#cardiopatiaIsquemica_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    cardiopatiaIsquemica_id  = case_when(cardiopatiaIsquemica_id =="No" ~ "No",
+                                   cardiopatiaIsquemica_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#15          
+#malaltiaCerebrovascular_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    malaltiaCerebrovascular_id  = case_when(malaltiaCerebrovascular_id =="No" ~ "No",
+                                   malaltiaCerebrovascular_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#16  
+#nefropatiaDiabetica_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    nefropatiaDiabetica_id  = case_when(nefropatiaDiabetica_id =="No" ~ "No",
+                                   nefropatiaDiabetica_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#17 
+#neuropatiaDiabetica_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    neuropatiaDiabetica_id  = case_when(neuropatiaDiabetica_id =="No" ~ "No",
+                                   neuropatiaDiabetica_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#18
+#retinopatiaDiabetica_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    retinopatiaDiabetica_id  = case_when(retinopatiaDiabetica_id =="No" ~ "No",
+                                   retinopatiaDiabetica_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#19 
+#antihipertensius_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    antihipertensius_id  = case_when(antihipertensius_id =="No" ~ "No",
+                                   antihipertensius_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#20 
+#adoAcarbosa_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoAcarbosa_id = case_when(adoAcarbosa_id =="No" ~ "No",
+                                   adoAcarbosa_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#21 
+#adoCanagliflozina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoCanagliflozina_id = case_when(adoCanagliflozina_id =="No" ~ "No",
+                                   adoCanagliflozina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#22 
+#adoClorpopramida_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoClorpopramida_id = case_when(adoClorpopramida_id =="No" ~ "No",
+                                   adoClorpopramida_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#23 
+#adoCombiGlimepiridaPioglitazona_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoCombiGlimepiridaPioglitazona_id = case_when(adoCombiGlimepiridaPioglitazona_id =="No" ~ "No",
+                                   adoCombiGlimepiridaPioglitazona_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#24 
+#adoCombiMetforminaPioglitazona_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoCombiMetforminaPioglitazona_id = case_when(adoCombiMetforminaPioglitazona_id =="No" ~ "No",
+                                   adoCombiMetforminaPioglitazona_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+
+#25 
+#adoCombiMetforminaSaxaglitina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoCombiMetforminaSaxaglitina_id = case_when(adoCombiMetforminaSaxaglitina_id =="No" ~ "No",
+                                   adoCombiMetforminaSaxaglitina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#26 
+#adoCombiMetforminaSitagliptina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoCombiMetforminaSitagliptina_id = case_when(adoCombiMetforminaSitagliptina_id =="No" ~ "No",
+                                   adoCombiMetforminaSitagliptina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#27 
+#adoCombiMetforminaVildagliptina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoCombiMetforminaVildagliptina_id = case_when(adoCombiMetforminaVildagliptina_id =="No" ~ "No",
+                                   adoCombiMetforminaVildagliptina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#28 
+#adoDapagliflozina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoDapagliflozina_id = case_when(adoDapagliflozina_id =="No" ~ "No",
+                                   adoDapagliflozina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#29 
+#adoEmpagliflozina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoEmpagliflozina_id = case_when(adoEmpagliflozina_id =="No" ~ "No",
+                                   adoEmpagliflozina_id =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#30 
+#adoGlibenclamida_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGlibenclamida_id  = case_when(adoGlibenclamida_id  =="No" ~ "No",
+                                   adoGlibenclamida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#31 
+#adoGlibornurida_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGlibornurida_id  = case_when(adoGlibornurida_id  =="No" ~ "No",
+                                   adoGlibornurida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#32 
+#adoGliclazida_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGliclazida_id  = case_when(adoGliclazida_id  =="No" ~ "No",
+                                   adoGliclazida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#33 
+#adoGlimepirida_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGlimepirida_id  = case_when(adoGlimepirida_id  =="No" ~ "No",
+                                   adoGlimepirida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#34 
+#adoGlipizida_id   
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGlipizida_id  = case_when(adoGlipizida_id  =="No" ~ "No",
+                                   adoGlipizida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#35 
+#adoGliquidona_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoGliquidona_id = case_when(adoGliquidona_id  =="No" ~ "No",
+                                   adoGliquidona_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#36 
+#adoLinagliptina_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoLinagliptina_id  = case_when(adoLinagliptina_id  =="No" ~ "No",
+                                   adoLinagliptina_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+
+
+
+#37 
+#adoMetformina_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoMetformina_id  = case_when(adoMetformina_id  =="No" ~ "No",
+                                   adoMetformina_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#38 
+#adoMiglitol_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoMiglitol_id  = case_when(adoMiglitol_id  =="No" ~ "No",
+                                   adoMiglitol_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#39 
+#adoNateglinida_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoNateglinida_id  = case_when(adoNateglinida_id  =="No" ~ "No",
+                                   adoNateglinida_id  =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#40 
+#adoPioglitazona_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+   adoPioglitazona_id   = case_when(adoPioglitazona_id   =="No" ~ "No",
+                                   adoPioglitazona_id   =="Si" ~ "Si",
+                                   TRUE ~ NA_character_))
+#41 
+#adoRepaglinida_id 
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
     adoRepaglinida_id = case_when(adoRepaglinida_id=="No" ~ "No",
                                    adoRepaglinida_id=="Si" ~ "Si",
-                                   adoRepaglinida_id=="NA" ~ NA_character_,
-                                   adoRepaglinida_id=="---" ~ NA_character_))
+                                   TRUE ~ NA_character_))
+#42 
+#adoSaxagliptina_id
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
-    hta_id = case_when(hta_id=="No" ~ "No",
-                                   hta_id=="Si" ~ "Si",
-                                   hta_id=="NA" ~ NA_character_,
-                                   hta_id=="---" ~ NA_character_))
-                                   
-                                   
-TAULA_PLANA<-TAULA_PLANA %>% mutate(
-    hta_id = case_when(hta_id=="No" ~ "No",
-                                   hta_id=="Si" ~ "Si",
-                                   TRUE ~ NA_character_,
+    adoSaxagliptina_id = case_when(adoSaxagliptina_id=="No" ~ "No",
+                                   adoSaxagliptina_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
                                    ))
-                                   
+#43 
+#adoSitagliptina_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoSitagliptina_id = case_when(adoSitagliptina_id=="No" ~ "No",
+                                   adoSitagliptina_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
+                                   ))
+#44 
+#adoTolbutamida_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoTolbutamida_id = case_when(adoTolbutamida_id=="No" ~ "No",
+                                   adoTolbutamida_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
+                                   ))
+#45 
+#adoVildagliptina_id  
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoVildagliptina_id = case_when(adoVildagliptina_id=="No" ~ "No",
+                                   adoVildagliptina_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
+                                   ))
+#46 
+#altreMedicacioADO_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    altreMedicacioADO_id = case_when(altreMedicacioADO_id=="No" ~ "No",
+                                   altreMedicacioADO_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
+                                   ))
+################################ 
+
 
 
 ```

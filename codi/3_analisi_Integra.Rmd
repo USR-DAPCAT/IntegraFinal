@@ -135,9 +135,10 @@ dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0)
 
 
 #DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
+#mydata %>% filter(! is.na(important_a) | ! is.na(important_b))
 
+dades_BASAL<-dades_BASAL%>%filter(exclusio1==0 &  !is.na(hba1cNGSP))
 
-dades_BASAL<-dades_BASAL%>%filter(exclusio1==0)
 
 
 #filtrem les altres base de dades!
@@ -164,13 +165,19 @@ dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
 
 
 #dades_BASAL_lab<-convertir_dates(d=dades_BASAL,taulavariables=conductor)
-#dades_BASAL_lab<-etiquetar(d=dades_BASAL_lab,taulavariables=conductor)
-#dades_BASAL_lab<-etiquetar_valors(dt=dades_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+dades_BASAL<-etiquetar(d=dades_BASAL,taulavariables=conductor)
+dades_BASAL<-etiquetar_valors(dt=dades_BASAL,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
 
 
 # CAmbiar categoria de referencia
 dades_BASAL<-dades_BASAL%>% refcat(conductor = conductor,ref = "refcat")
 
+dades<-etiquetar(d=dades,taulavariables=conductor)
+dades<-etiquetar_valors(dt=dades,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+
+
+# CAmbiar categoria de referencia
+dadesL<-dades%>% refcat(conductor = conductor,ref = "refcat")
 
                           #####################################
                           #V  I S I T A       H I S T O R I C #------------------
@@ -185,9 +192,8 @@ dades_BASAL<-dades_BASAL%>% refcat(conductor = conductor,ref = "refcat")
 
 ```
 
-
-
 ## 2. Descriptiva Basal
+
 ```{r Resultats0, include=T}
 
 #i)
@@ -202,6 +208,9 @@ table1::table1(formu_2,
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
+
+
+
 
 
 ```
@@ -265,7 +274,7 @@ dt_temp<-
 #dt_temp %>% select(edat,sexe_id)
 
 
-glm(hba1cNGSP_7~grupIntervencio+hba1cNGSP+edat+sexe_id+imc + duracioDiabetesMesos2
+glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc
     ,family = "binomial",data = dt_temp) %>% 
   parameters::parameters(exp=T)
 
