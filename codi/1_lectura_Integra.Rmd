@@ -72,21 +72,41 @@ conductor<-here::here("Integra_Conductor.xls")
 ## 1. Lectura 
 ```{r lectura1}
 
-
+#i)     DT_COSTOSSANITARIS
+#ii)    DT_PACIENT_lab_06.06.2020
+#iii)   DT_QUESTIONARI_BPAAT
+#iv)    DT_QUESTIONARI_DTSQ
+#v)     DT_QUESTIONARI_EQ5D
+#vi)    DT_QUESTIONARI_PAM
+#vii)   DT_VISITA_HISTORIC_PLANA_lab_06.02.2020
+#viii)  LT_RESPOSTA_PAM
 
 #----------------------------------------------------------------------#
 #channel2<-odbcConnectAccess2007("dades/INTEGRABBDDJULIO01072019_22.07.2019.accdb")
 #----------------------------------------------------------------------#
 
 channel2<-odbcConnectAccess2007(here::here(directori_dades,"INTEGRABBDDJULIO01072019_22.07.2019.accdb"))
-channel3 <- odbcConnectAccess(here::here(directori_dades,"integra_20190502_bbdd_original.mdb"))
+#channel3 <- odbcConnectAccess(here::here(directori_dades,"integra_20190502_bbdd_original.mdb"))
 
-#
-##1##
+DT_COSTOSSANITARIS <- read_excel(here::here(directori_dades,"DT_COSTOSSANITARIS.xlsx"))
+DT_PACIENT_lab <- read_excel(here::here(directori_dades,"DT_PACIENT_lab_06.06.2020.xlsx"))
+DT_QUESTIONARI_BPAAT <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_BPAAT.xlsx"))
+DT_QUESTIONARI_DTSQ <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_DTSQ.xlsx"))
+DT_QUESTIONARI_EQ5D <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_EQ5D.xlsx"))
+DT_QUESTIONARI_PAM <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_PAM.xlsx"))
+DT_VISITA_HISTORIC_PLANA_lab <- read_excel(here::here(directori_dades,"DT_VISITA_HISTORIC_PLANA_lab_06.02.2020.xlsx"))
+LT_RESPOSTA_PAM <- read_excel(here::here(directori_dades,"LT_RESPOSTA_PAM.xlsx"))
+
+
+DT_VISITA<- sqlQuery( channel2, paste ("select * from DT_VISITA "))
+DT_VISITA<-DT_VISITA%>%mutate(pacient_id=pacient_pacient_id)%>%dplyr::select(tipus,pacient_id,visita_id,completa,dataVisita)
+DT_VISITA<-DT_VISITA%>%select(pacient_id,visita_id)
+
+
+
 
 #01]
-altreMedicacioADO <- sqlQuery( channel2, paste ("select * from altreMedicacioADO"))
-
+#altreMedicacioADO <- sqlQuery( channel2, paste ("select * from altreMedicacioADO"))
 
 #names(altreMedicacioADO)
 # 1.1 altreMedicacioADO 
@@ -98,7 +118,7 @@ altreMedicacioADO <- sqlQuery( channel2, paste ("select * from altreMedicacioADO
 
 
 #02]****
-altreMedicacioGr <- sqlQuery( channel2, paste ("select * from altreMedicacioGr"))
+#altreMedicacioGr <- sqlQuery( channel2, paste ("select * from altreMedicacioGr"))
 
 #names(altreMedicacioGr)
 #1] "Id"                                   "visita_id"                            "altreMedicacioGralDescripORIGIGINAL" 
@@ -112,7 +132,7 @@ altreMedicacioGr <- sqlQuery( channel2, paste ("select * from altreMedicacioGr")
 
 
 #03]
-altreMedicacioInj <- sqlQuery( channel2, paste ("select * from altreMedicacioInj "))
+#altreMedicacioInj <- sqlQuery( channel2, paste ("select * from altreMedicacioInj "))
 
 #names(altreMedicacioInj )
 #altreMedicacioInj 
@@ -125,7 +145,7 @@ altreMedicacioInj <- sqlQuery( channel2, paste ("select * from altreMedicacioInj
 
 
 #04] 
-altresComplicacions <- sqlQuery( channel2, paste ("select * from altresComplicacionsDescrip "))
+#altresComplicacions <- sqlQuery( channel2, paste ("select * from altresComplicacionsDescrip "))
 
 #names(altresComplicacions)
 #[1] "Id"                         "visita_id"                  "altresComplicacionsDescrip" "CIE10"                     
@@ -134,7 +154,7 @@ altresComplicacions <- sqlQuery( channel2, paste ("select * from altresComplicac
 
 
 #05] 
-altresProblemesSalut<- sqlQuery( channel2, paste ("select * from altresProblemesSalut"))
+#altresProblemesSalut<- sqlQuery( channel2, paste ("select * from altresProblemesSalut"))
 
 #names(altresProblemesSalut)
 #[1] "Id"                             "visita_id"                      "altresProblemesSalutDescrip"    "c?digo CIE 10"                 
@@ -144,7 +164,7 @@ altresProblemesSalut<- sqlQuery( channel2, paste ("select * from altresProblemes
 
 
 #06]
-DT_ANALITICA<- sqlQuery( channel2, paste ("select * from DT_ANALITICA"))
+#DT_ANALITICA<- sqlQuery( channel2, paste ("select * from DT_ANALITICA"))
 
 #names(DT_ANALITICA)
 #[1] "Id"                              "visita_id"                       "alt"                             "ast"                            
@@ -159,7 +179,7 @@ DT_ANALITICA<- sqlQuery( channel2, paste ("select * from DT_ANALITICA"))
  
 
 #07]
-DT_COMPLICACIONS<- sqlQuery( channel2, paste ("select * from DT_COMPLICACIONS"))
+#DT_COMPLICACIONS<- sqlQuery( channel2, paste ("select * from DT_COMPLICACIONS"))
 
 #names(DT_COMPLICACIONS)
 #[1] "Id"                            "visita_id"                     "altresComplicacionsDescrip"    "dataDxArteriopatiaPeriferica" 
@@ -171,7 +191,7 @@ DT_COMPLICACIONS<- sqlQuery( channel2, paste ("select * from DT_COMPLICACIONS"))
 
 
 #08]
-DT_CRITERIS<- sqlQuery( channel2, paste ("select * from DT_CRITERIS "))
+#DT_CRITERIS<- sqlQuery( channel2, paste ("select * from DT_CRITERIS "))
 
 #names(DT_CRITERIS)
 #[1] "Id"                                         "pacient_id"                                 "codiIdentificacioPacient"                  
@@ -188,8 +208,8 @@ DT_CRITERIS<- sqlQuery( channel2, paste ("select * from DT_CRITERIS "))
 
 #DT_DEMOGRAFIA
 #09]
-DT_DEMOGRAFIA<- sqlQuery( channel2, paste ("select * from DT_DEMOGRAFIA "))
-DT_DEMOGRAFIA2 <- sqlFetch( channel3, 'DT_DEMOGRAFIA')
+#DT_DEMOGRAFIA<- sqlQuery( channel2, paste ("select * from DT_DEMOGRAFIA "))
+#DT_DEMOGRAFIA2 <- sqlFetch( channel3, 'DT_DEMOGRAFIA')
 
 #names(DT_DEMOGRAFIA)
 #[1] "Id"                 "visita_id"          "dataNaixement"      "edat"               "formComplet"        "verificat"         
@@ -198,7 +218,7 @@ DT_DEMOGRAFIA2 <- sqlFetch( channel3, 'DT_DEMOGRAFIA')
 
 #DT_EXPLORACIOFISICA
 #10]
-DT_EXPLORACIOFISICA<- sqlQuery( channel2, paste ("select * from DT_EXPLORACIOFISICA "))
+#DT_EXPLORACIOFISICA<- sqlQuery( channel2, paste ("select * from DT_EXPLORACIOFISICA "))
 
 #names(DT_EXPLORACIOFISICA)
 #[1] "Id"               "visita_id"        "formComplet"      "freqCardiaca"     "imc"              "perimetreCintura" "pes"             
@@ -207,7 +227,7 @@ DT_EXPLORACIOFISICA<- sqlQuery( channel2, paste ("select * from DT_EXPLORACIOFIS
 
 #DT_FINALITZACIO
 #11]
-DT_FINALITZACIO<- sqlQuery( channel2, paste ("select * from DT_FINALITZACIO "))
+#DT_FINALITZACIO<- sqlQuery( channel2, paste ("select * from DT_FINALITZACIO "))
 
 #names(DT_FINALITZACIO)
 #[1] "Id"                            "pacient_id"                    "altresMotiusDescrip_Unificado" "dataFiEstudi"                 
@@ -216,7 +236,7 @@ DT_FINALITZACIO<- sqlQuery( channel2, paste ("select * from DT_FINALITZACIO "))
 
 #DT_HABITS_TOXICS
 #12]
-DT_HABITS_TOXICS<- sqlQuery( channel2, paste ("select * from DT_HABITS_TOXICS "))
+#DT_HABITS_TOXICS<- sqlQuery( channel2, paste ("select * from DT_HABITS_TOXICS "))
 
 #names(DT_HABITS_TOXICS)
 #[1] "Id"             "visita_id"      "cigarretsDia"   "dataFiTabac"    "dataIniciTabac" "formComplet"    "verificat"      "fumador_id" 
@@ -224,7 +244,7 @@ DT_HABITS_TOXICS<- sqlQuery( channel2, paste ("select * from DT_HABITS_TOXICS ")
 
 #DT_HISTORIAMEDICA
 #13]
-DT_HISTORIAMEDICA<- sqlQuery( channel2, paste ("select * from DT_HISTORIAMEDICA "))
+#DT_HISTORIAMEDICA<- sqlQuery( channel2, paste ("select * from DT_HISTORIAMEDICA "))
 
 #names(DT_HISTORIAMEDICA)
 #[1] "Id"                          "visita_id"                   "altresProblemesSalutDescrip" "clinicalRiskGroup"          
@@ -235,7 +255,7 @@ DT_HISTORIAMEDICA<- sqlQuery( channel2, paste ("select * from DT_HISTORIAMEDICA 
 
 #DT_MEDICACIO_ADO
 #14]
-DT_MEDICACIO_ADO<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_ADO"))
+#DT_MEDICACIO_ADO<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_ADO"))
 
 #names(DT_MEDICACIO_ADO)
 #[1] "Id"                                  "visita_id"                           "adoAcarbosaDosi"                    
@@ -262,7 +282,7 @@ DT_MEDICACIO_ADO<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_ADO"))
 
 #DT_MEDICACIO_GENERAL
 #15]
-DT_MEDICACIO_GENERAL<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_GENERAL"))
+#DT_MEDICACIO_GENERAL<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_GENERAL"))
 
 #names(DT_MEDICACIO_GENERAL)
 #[1] "Id"                          "visita_id"                   "altreMedicacioGralDescrip"   "formComplet"                
@@ -272,7 +292,7 @@ DT_MEDICACIO_GENERAL<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_GE
 
 #DT_MEDICACIO_INJECTABLES
 #16]
-DT_MEDICACIO_INJECTABLES<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_INJECTABLES"))
+#DT_MEDICACIO_INJECTABLES<- sqlQuery( channel2, paste ("select * from DT_MEDICACIO_INJECTABLES"))
 
 #names(DT_MEDICACIO_INJECTABLES)
 #[1] "Id"                               "visita_id"                        "altreMedicacioInjInsulinaDescrip" "formComplet"                     
@@ -298,70 +318,70 @@ DT_MEDICACIO_INJECTABLES<- sqlQuery( channel2, paste ("select * from DT_MEDICACI
 ###################################
 
 
-DT_CRITERIS<-DT_CRITERIS%>%dplyr::select(-Id,-formComplet,-codiUBA,-codiIdentificacioPacient)
-DT_FINALITZACIO<-DT_FINALITZACIO%>%dplyr::select(-Id,-formComplet,-verificat)
+#DT_CRITERIS<-DT_CRITERIS%>%dplyr::select(-Id,-formComplet,-codiUBA,-codiIdentificacioPacient)
+#DT_FINALITZACIO<-DT_FINALITZACIO%>%dplyr::select(-Id,-formComplet,-verificat)
 
 
 
 #DT_PACIENT_DISCONTINUADOS
 #17]
-DT_PACIENT_DISCONTINUADOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_DISCONTINUADOS"))
+#DT_PACIENT_DISCONTINUADOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_DISCONTINUADOS"))
 
 #names(DT_PACIENT_DISCONTINUADOS)
 #[1] "Id"                       "pacient_id"               "codiIdentificacioPacient" "codiPacient"              "codiUBA"                 
 #[6] "dataCreacio"              "estat"                    "grupIntervencio"          "usuari_id"                "centre_id" 
 #--------
-DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
-DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
-DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%mutate(GR="DISC")
+#DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
+#DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
+#DT_PACIENT_DISCONTINUADOS<-DT_PACIENT_DISCONTINUADOS%>%mutate(GR="DISC")
 
 
 
 #DT_PACIENT_EXCLUIDOS
 #18]
-DT_PACIENT_EXCLUIDOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_EXCLUIDOS"))
+#DT_PACIENT_EXCLUIDOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_EXCLUIDOS"))
 
 #names(DT_PACIENT_EXCLUIDOS)
 #[1] "Id"                       "pacient_id"               "codiIdentificacioPacient" "codiPacient"              "codiUBA"                 
 #[6] "dataCreacio"              "estat"                    "grupIntervencio"          "usuari_id"                "centre_id"     
 
 #---------
-DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
-DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
-DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%mutate(GR="EXCL")
+#DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
+#DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
+#DT_PACIENT_EXCLUIDOS<-DT_PACIENT_EXCLUIDOS%>%mutate(GR="EXCL")
 
 #DT_PACIENT_FALLO DE SCREENING
 #19]
-DT_PACIENT_FALLO_DE_SCREENING<- sqlQuery( channel2, paste ("select * from DT_PACIENT_FALLO_DE_SCREENING"))
+#DT_PACIENT_FALLO_DE_SCREENING<- sqlQuery( channel2, paste ("select * from DT_PACIENT_FALLO_DE_SCREENING"))
 
 #names(DT_PACIENT_FALLO_DE_SCREENING)
 #[1] "Id"                       "pacient_id"               "codiIdentificacioPacient" "codiPacient"              "codiUBA"                 
 #[6] "dataCreacio"              "estat"                    "grupIntervencio"          "usuari_id"                "centre_id"       
 
 #---------
-DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%left_join(DT_CRITERIS   ,by="pacient_id")
-DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
-DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%mutate(GR="FALL_SCREEN")
+#DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%left_join(DT_CRITERIS   ,by="pacient_id")
+#DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
+#DT_PACIENT_FALLO_DE_SCREENING<-DT_PACIENT_FALLO_DE_SCREENING%>%mutate(GR="FALL_SCREEN")
 
 #DT_PACIENT_INCLUIDOS
 #20]
-DT_PACIENT_INCLUIDOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_INCLUIDOS"))
+#DT_PACIENT_INCLUIDOS<- sqlQuery( channel2, paste ("select * from DT_PACIENT_INCLUIDOS"))
 
 #names(DT_PACIENT_INCLUIDOS)
 #[1] "Id"                       "pacient_id"               "codiIdentificacioPacient" "codiPacient"              "codiUBA"                 
 #[6] "dataCreacio"              "estat"                    "grupIntervencio"          "usuari_id"                "centre_id"  
 
 #---------
-DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
-DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
-DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%mutate(GR="INCL")
+#DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%left_join(DT_CRITERIS   ,by="pacient_id")
+#DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%left_join(DT_FINALITZACIO   ,by="pacient_id")%>%dplyr::select(-altresMotiusDescrip_Unificado)
+#DT_PACIENT_INCLUIDOS<-DT_PACIENT_INCLUIDOS%>%mutate(GR="INCL")
 #---------
 
 
 
 #DT_SEGUIMENT
 #21]
-DT_SEGUIMENT<- sqlQuery( channel2, paste ("select * from DT_SEGUIMENT"))
+#DT_SEGUIMENT<- sqlQuery( channel2, paste ("select * from DT_SEGUIMENT"))
 
 #names(DT_SEGUIMENT)
 #[1] "Id"                        "visita_id"                 "formComplet"               "motiuNoSeguiment"          "verificat"                
@@ -370,7 +390,8 @@ DT_SEGUIMENT<- sqlQuery( channel2, paste ("select * from DT_SEGUIMENT"))
 
 #DT_VISITA
 #22]
-DT_VISITA<- sqlQuery( channel2, paste ("select * from DT_VISITA "))
+#DT_VISITA<- sqlQuery( channel2, paste ("select * from DT_VISITA "))
+#DT_VISITA<-DT_VISITA%>%mutate(pacient_id=pacient_pacient_id)%>%dplyr::select(tipus,pacient_id,visita_id,completa,dataVisita)
 
 #names(DT_VISITA)
 #[1] "Id"                 "tipus"              "visita_id"          "completa"           "dataVisita"         "pacient_pacient_id"
@@ -378,7 +399,7 @@ DT_VISITA<- sqlQuery( channel2, paste ("select * from DT_VISITA "))
 
 
 
-DT_COSTOSSANITARIS<-sqlQuery( channel2, paste ("select * from DT_COSTOSSANITARIS"))
+#DT_COSTOSSANITARIS<-sqlQuery( channel2, paste ("select * from DT_COSTOSSANITARIS"))
 
 #names(DT_COSTOSSANITARIS)
 #[1] "Id"                           "visita_id"                    "consExternaCopsRelDiabetesNo" "consExternaCopsRelDiabetesSi"
@@ -391,7 +412,7 @@ DT_COSTOSSANITARIS<-sqlQuery( channel2, paste ("select * from DT_COSTOSSANITARIS
 
 #DT_CENTRE
 #24] Ok
-DT_CENTRE<-sqlQuery( channel2, paste ("select * from DT_CENTRE"))
+#DT_CENTRE<-sqlQuery( channel2, paste ("select * from DT_CENTRE"))
 
 #names(DT_CENTRE)
 #[1] "Id"              "centre_id"       "abrevCentre"     "codiCentre"      "grupIntervencio"
@@ -414,10 +435,203 @@ DT_CENTRE<-sqlQuery( channel2, paste ("select * from DT_CENTRE"))
 ## 1. Lectura (part2.Filtre) 
 ```{r lectura2}
 
+#variable.names(DT_COSTOSSANITARIS )
+#[1] "visita_id"                    "consExternaCopsRelDiabetesNo" "consExternaCopsRelDiabetesSi" "costDerivacions"             
+#[5] "costIncapacitatsTemp"         "costLaboratori"               "costMedicacio"                "costProfessionals"           
+#[9] "costProvesCompl"              "costTiresReactives"           "costVisites"                  "formComplet"                 
+#[13] "ingresCopsRelDiabetesNo"      "ingresCopsRelDiabetesSi"      "numTiresReact1Any"            "urgenciesCopsRelDiabetesNo"  
+#[17] "urgenciesCopsRelDiabetesSi"   "verificat"                    "consExterna_id"               "ingres_id"                   
+#[21] "urgencies_id"         
+#variable.names(DT_PACIENT_lab )
+# [1] "...1"                                       "pacient_id"                                
+# [3] "codiIdentificacioPacient"                   "codiPacient"                               #
+# [5] "estat"                                      "grupIntervencio"                           
+# [7] "usuari_id"                                  "centre_id"                                 
+# [9] "codiUBA"                                    "abrevCentre"                               
+#[11] "codiCentre"                                 "nomCentre"                                 
+#[13] "pacients"                                   "GR"                                        
+#[15] "dataCreacio"                                "dataConsentiment"                          
+#[17] "motiuNoConsentiment"                        "inclusioConsentiment_id"                   
+#[19] "inclusioDxDM2_id"                           "inclusioEdat3080_id"                       
+#[21] "inclusioHba1cGrau9minim_id"                 "inclusioSenseCanvisTt_id"                  
+#[23] "exclusioAltres_id"                          "exclusioDroguesAlcohol_id"                 
+#[25] "exclusioEmabarasLactancia_id"               "exclusioFarmacsMetabHidrocarb_id"          
+#[27] "exclusioHemoglobinapatiesAnemia_id"         "exclusioIMCSuperior45_id"                  
+#[29] "exclusioInsufCardiaca34NYHA_id"             "exclusioMalaltiaMentalDemencia_id"         
+#[31] "exclusioMalaltiaTerminal_id"                "exclusioParticipacioAssaigClinicFarmacs_id"
+#[33] "exclusioTransplRenalDialisis_id"            "exclusioTtFarmacsAprimar_id"               
+#[35] "exclusioTtGlucocorticoides_id"              "exclusioTtImmunosupresors_id"              
+#[37] "exclusioTtNeoplasiaMaligna_id"              "exclusioCanvisTt_id"                       
+#[39] "exclusioHba1cInferior9en3mesos_id"          "exclusioControlEndocrinoleg_id"            
+#[41] "dataFiEstudi"                               "finalitzaEstudi_id"                        
+#[43] "motiuFinalEstudi_id"
+#variable.names(DT_QUESTIONARI_BPAAT )
+#[1] "visita_id"            "formComplet"          "totalBPAAT"           "verificat"            "activitatIntensa_id" 
+#[6] "activitatModerada_id"
+#variable.names(DT_QUESTIONARI_DTSQ )
+#[1] "visita_id"                 "formComplet"               "pregFrequenciaSucreAlt"    "pregFrequenciaSucreBaix"  
+# [5] "pregRecomenacioTractament" "pregSatisfConeixMalaltia"  "pregSatisfContTtActual"    "pregSatisfaccioTtActual"  
+# [9] "pregTractamentFlexible"    "pregTractamentPractic"     "totalDTSQ"                 "verificat"   
+#variable.names(DT_QUESTIONARI_EQ5D )
+#[1] "visita_id"                 "activitatPrincipalDescrip" "codiPostal"                "edat"                     
+# [5] "escalaAVSalut"             "formComplet"               "treballSalutSocialDescrip" "verificat"                
+# [9] "activitatPrincipal_id"     "estudisRealitzats_id"      "expMalGreuAltres_id"       "expMalGreuFamiliar_id"    
+#[13] "expMalGreuPersonal_id"     "fumador_id"                "pregAnsietat_id"           "pregCuraPersonal_id"      
+#[17] "pregDolor_id"              "pregMovilitat_id"          "pregQuotidianes_id"        "sexe_id"                  
+#[21] "treballSalutSocial_id"    
+#variable.names(DT_QUESTIONARI_PAM )
+#[1] "visita_id"                   "formComplet"                 "totalPAM"                    "verificat"                  
+# [5] "pregAutoMedicacio_id"        "pregConeixMedicaments_id"    "pregConeixTtsDisponibles_id" "pregEntenPSiCauses_id"      
+# [9] "pregEstilVidaEstres_id"      "pregEvitarPS_id"             "pregEvitarReduirPS_id"       "pregHabitsSaludables_id"    
+#[13] "pregInformarMetge_id"        "pregPaperActiu_id"           "pregResponsable_id"          "pregSeguiTtCasa_id"         
+#[17] "pregSolucioNousPS_id"       
+#variable.names(DT_VISITA_HISTORIC_PLANA_lab)
+#  [1] "...1"                                      "tipus"                                    
+#  [3] "visita_id"                                 "completa"                                 
+#  [5] "dataVisita"                                "dataNaixement"                            
+#  [7] "edat"                                      "sexe_id"                                  
+#  [9] "etnia_id"                                  "altresEtniaDescrip"                       
+# [11] "problemesSalut_id"                         "clinicalRiskGroup"                        
+# [13] "duracioDiabetesAnys"                       "duracioDiabetesMesos"                     
+# [15] "duracioDiabetesMesos2"                     "grupMorbiditatAjustada"                   
+# [17] "dislipemia_id"                             "dataDxDislipemia"                         
+# [19] "hta_id"                                    "dataDxHta"                                
+# [21] "altresProblemesSalut_id"                   "altresProblemesSalutDescrip"              
+# [23] "PATOLOGIATIROIDALBASAL_id_ALTRES"          "MPOCBASAL_id_ALTRES"                      
+# [25] "MALALTIESMENTALSBASAL_id_ALTRES"           "CARDIOPATIAISQUEMICABASAL_id_ALTRES"      
+# [27] "RETINOPATIADIABETICABASAL_id_ALTRES"       "DISFUNCIOSEXUALBASAL_id_ALTRES"           
+# [29] "NEOPLASIESBASAL_id_ALTRES"                 "PEUDIABETICBASAL_id_ALTRES"               
+# [31] "AMPUTACIONSBASAL_id_ALTRES"                "freqCardiaca"                             
+# [33] "imc"                                       "perimetreCintura"                         
+# [35] "pes"                                       "talla"                                    
+# [37] "tensioDiastolica"                          "tensioSistolica"                          
+# [39] "tensioBrac_id"                             "antiagregantsPlaquetaris_id"              
+# [41] "anticoagulants_id"                         "antihipertensius_id"                      
+# [43] "hipolemiants_id"                           "altreMedicacioGral_id"                    
+# [45] "altreMedicacioGral_id_ALTRES"              "antiagregantsPlaquetaris_id_ALTRES"       
+# [47] "anticoagulants_id_ALTRES"                  "antihipertensius_id_ALTRES"               
+# #[49] "hipolemiants_id_ALTRES"                    "ANTIDEPRESSANTS_id_ALTRES"                
+# [51] "ANTIPSYCHOTICS_id_ALTRES"                  "ANTIEPILEPTICS_id_ALTRES"                 
+# [53] "ANXIOLYTICS_id_ALTRES"                     "OPIOIDS_id_ALTRES"                        
+# [55] "CORTICOSTEROIDS_id_ALTRES"                 "OTHERANALGESICSANDANTIPYRETICS_id_ALTRES" 
+# [57] "NSAID_ALTRES"                              "ADRENERGICS_INHALANTS_id_ALTRES"          
+# [59] "THYROIDPREPARATIONS_id_ALTRES"             "HORMONES_id_ALTRES"                       
+# [61] "adoAcarbosa_id"                            "adoCanagliflozina_id"                     
+# [63] "adoClorpopramida_id"                       "adoCombiGlimepiridaPioglitazona_id"       
+# [65] "adoCombiMetforminaPioglitazona_id"         "adoCombiMetforminaSaxaglitina_id"         
+# [67] "adoCombiMetforminaSitagliptina_id"         "adoCombiMetforminaVildagliptina_id"       
+# [69] "adoDapagliflozina_id"                      "adoEmpagliflozina_id"                     
+# [71] "adoGlibenclamida_id"                       "adoGlibornurida_id"                       
+# [73] "adoGliclazida_id"                          "adoGlimepirida_id"                        
+# [75] "adoGlipizida_id"                           "adoGliquidona_id"                         
+# [77] "adoLinagliptina_id"                        "adoMetformina_id"                         
+# [79] "adoMiglitol_id"                            "adoNateglinida_id"                        
+# [81] "adoPioglitazona_id"                        "adoRepaglinida_id"                        
+# [83] "adoSaxagliptina_id"                        "adoSitagliptina_id"                       
+# [85] "adoTolbutamida_id"                         "adoVildagliptina_id"                      
+# [87] "altreMedicacioADO_id"                      "adoCombiMetforminaLinaglibtina_id_ALTRES" 
+# [89] "adoCombiMetforminaAlogliptina_id_ALTRES"   "adoAlogliptina_id_ALTRES"                 
+# [91] "adoCombiAlogliptinaPioglitazona_id_ALTRES" "adoCombMetforminaEmpaglifozina_id_ALTRES" 
+# [93] "adoCombMetforminaDapaglifozina_id_ALTRES"  "injAbasaglar_id"                          
+# [95] "injAbiglutida_id"                          "injActrapid_id"                           
+# [97] "injApidra_id"                              "injExenatida_id"                          
+# [99] "injHumalog_id"                             "injHumalogBasal_id"                       
+#[101] "injHumalogMix25_id"                        "injHumalogMix50_id"                       
+#[103] "injHumilana3070_id"                        "injHumulinaNPH_id"                        
+#[105] "injHumulinaRegular_id"                     "injInsulatard_id"                         
+#[107] "injLantus_id"                              "injLevemir_id"                            
+#[109] "injLiraglutida_id"                         "injLixisenatide_id"                       
+#[111] "injMixtard30_id"                           "injNovomix30_id"                          
+#[113] "injNovomix50_id"                           "injNovomix70_id"                          
+#[115] "injNovorapid_id"                           "altreMedicacioInjInsulina_id"             
+#[117] "injToujeo_id_ALTRES"                       "injTresiba_id_ALTRES"                     
+#[119] "injExenatida_id_ALTRES"                    "injAbasaglar_id_ALTRES"                   
+#[121] "dataAnalitica"                             "glucosa"                                  
+#[123] "hba1cIFCC"                                 "hba1cNGSP"                                
+#[125] "alt"                                       "ast"                                      
+#[127] "ggt"                                       "colesterolHdl"                            
+#[129] "colesterolLdl"                             "colesterolNoHdl"                          
+#[131] "colesterolTtl"                             "triglicerids"                             
+#[133] "volumCorpuscularMig"                       "hematocrit"                               
+#[135] "hemoglobina"                               "hemoglobinaCorpuscularMitja"              
+#[137] "ide"                                       "hematies"                                 
+#[139] "leucocits"                                 "plaquetes"                                
+#[141] "linfocits"                                 "monocits"                                 
+#[143] "neutrofils"                                "eosinofils"                               
+#[145] "basofils"                                  "creatinina"                               
+#[147] "filtratGlomerular"                         "filtratGlomerularSuperior60"              
+#[149] "orinaCreatinina"                           "orinaMicroalbuminuria"                    
+#[151] "orinaMicroalbuminuriaCreatinina"           "cigarretsDia"                             
+#[153] "dataFiTabac"                               "dataIniciTabac"                           
+#[155] "fumador_id"                                "motiuNoSeguiment"                         
+#[157] "seguimentRecomenacions_id"                 "arteriopatiaPeriferica_id"                
+#[159] "cardiopatiaIsquemica_id"                   "insuficienciaCardiaca_id"                 
+#[161] "malaltiaCerebrovascular_id"                "nefropatiaDiabetica_id"                   
+#[163] "neuropatiaDiabetica_id"                    "retinopatiaDiabetica_id"                  
+#[165] "altresComplicacions_id"                    "PATOLOGIATIROIDAL_id_ALTRES"              
+#[167] "MPOC_id_ALTRES"                            "MALALTIESMENTALS_id_ALTRES"               
+#[169] "DISFUNCIOSEXUAL_id_ALTRES"                 "NEOPLASIES_id_ALTRES"                     
+#[171] "PEUDIABETIC_id_ALTRES"                     "AMPUTACIONS_id_ALTRES"                    
+#[173] "ingresCopsRelDiabetesNo"                   "ingresCopsRelDiabetesSi"                  
+#[175] "urgenciesCopsRelDiabetesNo"                "urgenciesCopsRelDiabetesSi"               
+#[177] "ingres_id"                                 "urgencies_id"                             
+#[179] "consExterna_id"                            "consExternaCopsRelDiabetesNo"             
+#[181] "consExternaCopsRelDiabetesSi"              "numTiresReact1Any"                        
+#[183] "costDerivacions"                           "costIncapacitatsTemp"                     
+#[185] "costLaboratori"                            "costMedicacio"                            
+#[187] "costProfessionals"                         "costProvesCompl"                          
+#[189] "costTiresReactives"                        "costVisites" 
+#variable.names(LT_RESPOSTA_PAM)
+#[1] "id"         "descripcio"
 
 
-DT_PACIENT<-rbind(DT_PACIENT_DISCONTINUADOS,DT_PACIENT_INCLUIDOS)
-DT_PACIENT_SELECT<-DT_PACIENT%>%dplyr::select(pacient_id)
+#i)     DT_COSTOSSANITARIS
+#ii)    DT_PACIENT_lab_06.06.2020
+#iii)   DT_QUESTIONARI_BPAAT
+#iv)    DT_QUESTIONARI_DTSQ
+#v)     DT_QUESTIONARI_EQ5D
+#vi)    DT_QUESTIONARI_PAM
+#vii)   DT_VISITA_HISTORIC_PLANA_lab_06.02.2020
+#viii)  LT_RESPOSTA_PAM
+
+DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat)	   
+DT_PACIENT_lab<-DT_PACIENT_lab 
+DT_VISITA_HISTORIC_PLANA_lab<-DT_VISITA_HISTORIC_PLANA_lab  
+DT_QUESTIONARI_BPAAT<-DT_QUESTIONARI_BPAAT%>%dplyr::select(-formComplet,-verificat)	   
+DT_QUESTIONARI_DTSQ<-DT_QUESTIONARI_DTSQ%>%dplyr::select(-formComplet,-verificat)	   
+DT_QUESTIONARI_EQ5D<-DT_QUESTIONARI_EQ5D%>%dplyr::select(-formComplet,-verificat)	   
+DT_QUESTIONARI_PAM<-DT_QUESTIONARI_PAM%>%dplyr::select(-formComplet,-verificat)	   
+LT_RESPOSTA_PAM<-LT_RESPOSTA_PAM   
+DT_VISITA<-DT_VISITA
+
+#DT_DEMOGRAFIA<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_HISTORIAMEDICA<-DT_HISTORIAMEDICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_EXPLORACDT_COSTOSSANITARISIOFISICA<-DT_EXPLORACIOFISICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_GENERAL<-DT_MEDICACIO_GENERAL%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_ADO<-DT_MEDICACIO_ADO%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_INJECTABLES<-DT_MEDICACIO_INJECTABLES%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_ANALITICA<-DT_ANALITICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_HABITS_TOXICS<-DT_HABITS_TOXICS%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_SEGUIMENT<-DT_SEGUIMENT%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_COMPLICACIONS<-DT_COMPLICACIONS%>%dplyr::select(-formComplet,-verificat,-Id)	
+#DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-Id)	   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#DT_PACIENT<-rbind(DT_PACIENT_DISCONTINUADOS,DT_PACIENT_INCLUIDOS)
+#DT_PACIENT_SELECT<-DT_PACIENT%>%dplyr::select(pacient_id)
 
 
 # Aquests seran els pacients escollits:
@@ -430,13 +644,13 @@ DT_PACIENT_SELECT<-DT_PACIENT%>%dplyr::select(pacient_id)
 
 
 #---------------##---------------##---------------##---------------##---------------#
-DT_VISITA_HISTORIC<-DT_VISITA%>%mutate(pacient_id=pacient_pacient_id)%>%dplyr::select(tipus,pacient_id,visita_id,completa,dataVisita)
+#DT_VISITA_HISTORIC<-DT_VISITA%>%mutate(pacient_id=pacient_pacient_id)%>%dplyr::select(tipus,pacient_id,visita_id,completa,dataVisita)
 
 
 #De la base de dades dels Historics agafem nomes els PACIENT INCLU?TS [N=407!]
 #FEM dues base de dades :[DT_VISITA_HISTORIC] i [DT_VISITA_HISTORIC_MES00]/mes00.
 
-DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
+#DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
 #---------------##---------------##---------------##---------------##---------------#
 
 
@@ -456,17 +670,17 @@ DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$
 
 
 
-DT_DEMOGRAFIA<-DT_DEMOGRAFIA%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_HISTORIAMEDICA<-DT_HISTORIAMEDICA%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_EXPLORACIOFISICA<-DT_EXPLORACIOFISICA%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_MEDICACIO_GENERAL<-DT_MEDICACIO_GENERAL%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_MEDICACIO_ADO<-DT_MEDICACIO_ADO%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_MEDICACIO_INJECTABLES<-DT_MEDICACIO_INJECTABLES%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_ANALITICA<-DT_ANALITICA%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_HABITS_TOXICS<-DT_HABITS_TOXICS%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_SEGUIMENT<-DT_SEGUIMENT%>%dplyr::select(-formComplet,-verificat,-Id)		
-DT_COMPLICACIONS<-DT_COMPLICACIONS%>%dplyr::select(-formComplet,-verificat,-Id)	
-DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-Id)	   
+#DT_DEMOGRAFIA<-DT_DEMOGRAFIA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_HISTORIAMEDICA<-DT_HISTORIAMEDICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_EXPLORACIOFISICA<-DT_EXPLORACIOFISICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_GENERAL<-DT_MEDICACIO_GENERAL%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_ADO<-DT_MEDICACIO_ADO%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_MEDICACIO_INJECTABLES<-DT_MEDICACIO_INJECTABLES%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_ANALITICA<-DT_ANALITICA%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_HABITS_TOXICS<-DT_HABITS_TOXICS%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_SEGUIMENT<-DT_SEGUIMENT%>%dplyr::select(-formComplet,-verificat,-Id)		
+#DT_COMPLICACIONS<-DT_COMPLICACIONS%>%dplyr::select(-formComplet,-verificat,-Id)	
+#DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-Id)	   
 
 
 
@@ -482,20 +696,53 @@ DT_COSTOSSANITARIS<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-
 ```{r fusio_taulaPlana}
 
 
+#DT_PACIENT_lab
+#DT_VISITA_HISTORIC_PLANA_lab
 
-DT_VISITA_HISTORIC_FINAL<-DT_VISITA_HISTORIC%>%left_join(DT_PACIENT   ,by="pacient_id")%>%
-  left_join(DT_DEMOGRAFIA   ,by="visita_id")%>%
-    left_join(DT_HISTORIAMEDICA   ,by="visita_id")%>%
-      left_join(DT_EXPLORACIOFISICA   ,by="visita_id")%>%
-        left_join(DT_MEDICACIO_GENERAL   ,by="visita_id")%>%
-          left_join(DT_MEDICACIO_ADO   ,by="visita_id")%>%
-            left_join(DT_MEDICACIO_INJECTABLES   ,by="visita_id")%>%
-              left_join(DT_ANALITICA   ,by="visita_id")%>%
-                left_join(DT_HABITS_TOXICS   ,by="visita_id")%>%
-                  left_join(DT_SEGUIMENT   ,by="visita_id")%>%
-                    left_join(DT_COMPLICACIONS   ,by="visita_id")%>%
-                      left_join(DT_COSTOSSANITARIS   ,by="visita_id")
+#DT_QUESTIONARI_BPAAT   
+#DT_QUESTIONARI_DTSQ	   
+#DT_QUESTIONARI_EQ5D 
+#DT_QUESTIONARI_PAM	
 
+#DT_COSTOSSANITARIS 
+#
+##LT_RESPOSTA_PAM
+
+
+
+
+DT_VISITA_HISTORIC_PLANA_lab<-DT_VISITA_HISTORIC_PLANA_lab%>%select(-"...1")
+DT_PACIENT_lab<-DT_PACIENT_lab%>%select(-"...1")
+DT_QUESTIONARI_EQ5D<-DT_QUESTIONARI_EQ5D%>%select(-edat,-fumador_id,-sexe_id)
+
+
+DT_VISITA_HISTORIC_FINAL<-DT_VISITA_HISTORIC_PLANA_lab%>%
+  left_join(DT_VISITA   ,by="visita_id")%>%
+   left_join(DT_PACIENT_lab   ,by="pacient_id")%>%
+    left_join(DT_QUESTIONARI_BPAAT   ,by="visita_id")%>%
+     left_join(DT_QUESTIONARI_DTSQ   ,by="visita_id")%>%
+        left_join(DT_QUESTIONARI_EQ5D    ,by="visita_id")%>%
+          left_join(DT_QUESTIONARI_PAM   ,by="visita_id")
+
+
+variable.names(DT_VISITA_HISTORIC_FINAL)
+  
+
+
+
+#DT_VISITA_HISTORIC_FINAL<-DT_VISITA_HISTORIC%>%left_join(DT_PACIENT   ,by="pacient_id")%>%
+#  left_join(DT_DEMOGRAFIA   ,by="visita_id")%>%
+#    left_join(DT_HISTORIAMEDICA   ,by="visita_id")%>%
+#      left_join(DT_EXPLORACIOFISICA   ,by="visita_id")%>%
+#        left_join(DT_MEDICACIO_GENERAL   ,by="visita_id")%>%
+#          left_join(DT_MEDICACIO_ADO   ,by="visita_id")%>%
+#            left_join(DT_MEDICACIO_INJECTABLES   ,by="visita_id")%>%
+#              left_join(DT_ANALITICA   ,by="visita_id")%>%
+#                left_join(DT_HABITS_TOXICS   ,by="visita_id")%>%
+#                 left_join(DT_SEGUIMENT   ,by="visita_id")%>%
+#                  left_join(DT_COMPLICACIONS   ,by="visita_id")%>%
+#                   left_join(DT_COSTOSSANITARIS   ,by="visita_id")
+  
 
 
 

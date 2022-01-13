@@ -118,18 +118,19 @@ dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0)
 
 
 
-flow_chart1<-criteris_exclusio_diagrama(dt=dades_BASAL,
-                                        taulavariables=conductor,
-                                        criteris = "exc_pre",
-                                        ordre="exc_ordre",
-                                        grups=NA,
-                                        etiquetes="descripcio",
-                                        sequencial = T,
-                                        pob_lab=c("Estudio INTEGRA  ","Estudio INTEGRA sin exclusiones"),
-                                        colors=c("white","grey"),
-                                        forma=c("ellipse","box"))
+#flow_chart1<-criteris_exclusio_diagrama(dt=dades_BASAL,
+#                                        taulavariables=conductor,
+#                                        criteris = "exc_pre",
+#                                        ordre="exc_ordre",
+#                                        grups=NA,
+#                                        etiquetes="descripcio",
+#                                        sequencial = T,
+#                                        pob_lab=c("Estudio INTEGRA  ","Estudio INTEGRA sin exclusiones"),
+#                                        colors=c("white","grey"),
+#                                        forma=c("ellipse","box"))
 
-flow_chart1
+#flow_chart1
+
 
 
 
@@ -162,16 +163,16 @@ dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
 
 
 
-dades_BASAL_lab<-convertir_dates(d=dades_BASAL,taulavariables=conductor)
-dades_BASAL_lab<-etiquetar(d=dades_BASAL_lab,taulavariables=conductor)
-dades_BASAL_lab<-etiquetar_valors(dt=dades_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+#dades_BASAL_lab<-convertir_dates(d=dades_BASAL,taulavariables=conductor)
+#dades_BASAL_lab<-etiquetar(d=dades_BASAL_lab,taulavariables=conductor)
+#dades_BASAL_lab<-etiquetar_valors(dt=dades_BASAL_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
 
 
 # CAmbiar categoria de referencia
-dades_BASAL_lab<-dades_BASAL_lab %>% refcat(conductor = conductor,ref = "refcat")
+dades_BASAL<-dades_BASAL%>% refcat(conductor = conductor,ref = "refcat")
 
 
-                        #####################################
+                          #####################################
                           #V  I S I T A       H I S T O R I C #------------------
                           #####################################
 
@@ -193,11 +194,11 @@ dades_BASAL_lab<-dades_BASAL_lab %>% refcat(conductor = conductor,ref = "refcat"
 
 
 #formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
-formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL_lab)
+formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
 
 
 table1::table1(formu_2,
-               data = dades_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
+               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
@@ -210,7 +211,7 @@ table1::table1(formu_2,
 #dades_BASAL_lab %>% select(centre_id)
 
 table1::table1(~ centre_id  | grupIntervencio,
-               data = dades_BASAL_lab,caption="TAULA 1.Descriptiva BASAL",
+               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
@@ -245,7 +246,7 @@ dt_temp<-
 
 ## Reg logistica condicional
 dt_temp<-
-  dades_BASAL_lab %>% 
+  dades_BASAL %>% 
   left_join(
     
     dades %>% filter(tipus=="Mes12") %>% 

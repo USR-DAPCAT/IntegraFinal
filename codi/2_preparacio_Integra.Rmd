@@ -85,12 +85,48 @@ TAULA_PLANA<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% a
 
 
 #TAULA_PLANA$duracioDiabetesMesos
-
-TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos=if_na(duracioDiabetesMesos,0))
-TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos2=duracioDiabetesAnys*12+duracioDiabetesMesos)
+TAULA_PLANA$duracioDiabetesMesos2<-as.numeric(TAULA_PLANA$duracioDiabetesMesos2)
+#TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos=if_na(duracioDiabetesMesos,0))
+#TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos2=duracioDiabetesAnys*12+duracioDiabetesMesos)
 TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesAnys2=duracioDiabetesMesos2/12)
 
-#TAULA_PLANA$duracioDiabetesMesos2
+TAULA_PLANA$duracioDiabetesMesos2<-as.numeric(TAULA_PLANA$duracioDiabetesMesos2)
+TAULA_PLANA$edat<-as.numeric(TAULA_PLANA$edat)
+TAULA_PLANA$imc<-as.numeric(TAULA_PLANA$imc)
+TAULA_PLANA$tensioDiastolica<-as.numeric(TAULA_PLANA$tensioDiastolica)
+TAULA_PLANA$tensioSistolica<-as.numeric(TAULA_PLANA$tensioSistolica)
+TAULA_PLANA$hba1cIFCC<-as.numeric(TAULA_PLANA$hba1cIFCC)
+TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
+
+#TAULA_PLANA<-mutate_at(TAULA_PLANA, vars( starts_with("ado") ), funs( if_else(.=="---"   ,0,1)))
+
+#TAULA_PLANA<-TAULA_PLANA %>% mutate(
+#     GRUP_DIABETIC_CAT2 = case_when(
+#          DM1==1 ~ 1,
+#          (DM2==1 | FX.ADO=="20200520") ~ 2,
+#          G_DIABETIC==1 ~ 3,
+#          TRUE ~ 0
+#     ))
+
+
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    adoRepaglinida_id = case_when(adoRepaglinida_id=="No" ~ "No",
+                                   adoRepaglinida_id=="Si" ~ "Si",
+                                   adoRepaglinida_id=="NA" ~ NA_character_,
+                                   adoRepaglinida_id=="---" ~ NA_character_))
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    hta_id = case_when(hta_id=="No" ~ "No",
+                                   hta_id=="Si" ~ "Si",
+                                   hta_id=="NA" ~ NA_character_,
+                                   hta_id=="---" ~ NA_character_))
+                                   
+                                   
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    hta_id = case_when(hta_id=="No" ~ "No",
+                                   hta_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_,
+                                   ))
+                                   
 
 
 ```
