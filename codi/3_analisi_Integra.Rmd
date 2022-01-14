@@ -79,8 +79,8 @@ library("survminer")
 library("survival")
 library("forestmodel")
 library("sjmisc")
-library(devtools)
-
+library("devtools")
+library("sjPlot")
 # Funcions 
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
 devtools::source_url(link_source)
@@ -338,6 +338,7 @@ table1::table1(~ hba1cNGSP_final,
 print("Regressio Lineal Mitjanes de Diferència hba1c")
 
 #devtools::install_github("strengejacke/sjPlot")
+
 
 #summary(glm(Dif~hba1cNGSP     ,family = "gaussian",data = dt_temp) )
   
