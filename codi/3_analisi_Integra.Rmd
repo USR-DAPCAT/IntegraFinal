@@ -1,5 +1,5 @@
 ---
-title: "Estudio INTEGRA: estrategia de INTervención intEgral en pacientes con mal control Glucémico de la diabetes mellitus tipo 2 en el Ámbito de Atención PRimariA"
+title: "Estudi INTEGRA: estratègia d'INTervenció intEgral en pacients amb mal control Glucèmic de la diabetis mellitus tipus 2 a l'Àmbit d'Atenció PRimariA"
 author: "Rai Puig & Jordi Real"
 website: "https://github.com/USR-DAPCAT/"
 
@@ -75,6 +75,10 @@ library("pander")
 library("hablar")
 
 
+library(ggplot2)
+library(survminer)
+library(survival)
+library(forestmodel)
 
 
 # Funcions 
@@ -177,7 +181,7 @@ dades<-etiquetar_valors(dt=dades,variables_factors=conductor,fulla="etiquetes0",
 
 
 # CAmbiar categoria de referencia
-dadesL<-dades%>% refcat(conductor = conductor,ref = "refcat")
+dades<-dades%>% refcat(conductor = conductor,ref = "refcat")
 
                           #####################################
                           #V  I S I T A       H I S T O R I C #------------------
@@ -201,6 +205,7 @@ dadesL<-dades%>% refcat(conductor = conductor,ref = "refcat")
 
 #formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
 formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
+formu_3<-formula_compare("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
 
 
 table1::table1(formu_2,
@@ -209,6 +214,16 @@ table1::table1(formu_2,
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
+
+#descrTable(formu_3,
+#           method =1,
+#           data=dades_BASAL,
+#           max.xlev = 200, 
+#           max.ylev = 10,
+#           show.p.overall=FALSE,
+#           show.n = T,
+#           show.all=T,
+#          hide.no="No",simplify=F,digits=3)%>%export2md(header.background = "grey", header.color = "white", size=12,caption = "TAULA 1.Descriptiva BASAL")
 
 
 
@@ -266,19 +281,59 @@ dt_temp<-
 
 dt_temp<-
   dt_temp %>% 
-  # select(pacient_id,centre_id,grupIntervencio,hba1cNGSP,hba1cNGSP_final) %>% 
-  # na.omit() %>% 
-  mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
+    mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
+
+dt_temp<-
+  dt_temp %>% 
+    mutate(Dif=hba1cNGSP_final-hba1cNGSP)
+
+dt_temp_s<-dt_temp%>%filter(grupIntervencio=="Sham")
+dt_temp_i<-dt_temp%>%filter(grupIntervencio=="Intervention")
+
+print("Grup Sham")
+mean(dt_temp_s$Dif, na.rm=TRUE)
+t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
+
+print("Grup Intervention")
+mean(dt_temp_i$Dif, na.rm=TRUE)
+t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
+
+#TAULA 
 
 
-#dt_temp %>% select(edat,sexe_id)
+table1::table1(~ hba1cNGSP,
+               data = dt_temp_i,caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
 
+table1::table1(~ hba1cNGSP_final,
+               data = dt_temp_i,caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
 
-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc
-    ,family = "binomial",data = dt_temp) %>% 
+table1::table1(~ hba1cNGSP,
+               data = dt_temp_s,caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+table1::table1(~ hba1cNGSP_final,
+               data = dt_temp_s,caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc ,family = "binomial",data = dt_temp) %>% 
   parameters::parameters(exp=T)
 
-#table(dt_temp$hta_id)
+ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc ,family = "binomial",data = dt_temp) 
+print(forest_model(ramo,factor_separate_line = TRUE))
+
+
+
+
 
 ```
 

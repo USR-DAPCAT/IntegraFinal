@@ -127,17 +127,15 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
                                    TRUE ~ NA_character_))
 
 
-
-
 #4
 #etnia_id 
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
     etnia_id = case_when(etnia_id=="Africana" ~ "Africana",
-                         etnia_id=="Asiática" ~ "Asiática",
-                         etnia_id=="Caucásica" ~ "Caucásica",
+                         etnia_id=="Asiática" ~ "Asiàtica",
+                         etnia_id=="Caucásica" ~ "Caucàsica",
                          etnia_id=="Hispanoamericana" ~ "Hispanoamericana",
                          etnia_id=="Indostani" ~ "Indostani",
-                                   TRUE ~ NA_character_))
+                                   TRUE ~ "Altres"))
 #5         
 #duracioDiabetesMesos2
 #5          
