@@ -73,13 +73,13 @@ library("RODBC")
 library("devtools")
 library("pander")
 library("hablar")
-
-
-library(ggplot2)
-library(survminer)
-library(survival)
-library(forestmodel)
-
+library("miceadds")
+library("ggplot2")
+library("survminer")
+library("survival")
+library("forestmodel")
+library("sjmisc")
+library(devtools)
 
 # Funcions 
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
@@ -107,7 +107,7 @@ dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibb
 dades_BASAL<-dades%>%filter(tipus=="Mes00")
 dades_MES03<-dades%>%filter(tipus=="Mes03")
 dades_MES06<-dades%>%filter(tipus=="Mes06")
-dades_FINAL<-dades%>%filter(tipus=="Mes00")
+dades_FINAL<-dades%>%filter(tipus=="Mes12")
 
 
 
@@ -232,19 +232,25 @@ table1::table1(formu_2,
 
 ```{r Resultats1, include=T}
 
+#cluster:[]
+
+
 #dades_BASAL_lab %>% select(centre_id)
 
 table1::table1(~ centre_id  | grupIntervencio,
-               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL",
+               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL:#cluster:[]",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
 ```
 
+
+
 ## 3. Analisis de l'outcome (Change from baseline in HbA1c)
 
 ```{r Resultats2, include=T}
+
 
 #dades_BASAL_lab %>% select(hba1cNGSP)
 
@@ -261,14 +267,9 @@ dt_temp<-
 
 #dt_temp
 
-  
-```
 
-# Analisis de achiving the HbA1c < 7% target
+## Reg logistica incondicional
 
-```{r Resultats3, include=T}
-
-## Reg logistica condicional
 dt_temp<-
   dades_BASAL %>% 
   left_join(
@@ -290,15 +291,19 @@ dt_temp<-
 dt_temp_s<-dt_temp%>%filter(grupIntervencio=="Sham")
 dt_temp_i<-dt_temp%>%filter(grupIntervencio=="Intervention")
 
-print("Grup Sham")
+print("t-test Diferencia de mitjanes entre Basal i Final,Grup Sham")
+
 mean(dt_temp_s$Dif, na.rm=TRUE)
 t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
 
-print("Grup Intervention")
+print("t-test Diferencia de mitjanes entre Basal i Final,Grup Intervention")
+
+
 mean(dt_temp_i$Dif, na.rm=TRUE)
 t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
 
 #TAULA 
+
 
 
 table1::table1(~ hba1cNGSP,
@@ -325,60 +330,89 @@ table1::table1(~ hba1cNGSP_final,
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc ,family = "binomial",data = dt_temp) %>% 
+
+
+#-------------------------------------------------------------------------------------#
+
+
+print("Regressio Lineal Mitjanes de Diferència hba1c")
+
+#devtools::install_github("strengejacke/sjPlot")
+
+#summary(glm(Dif~hba1cNGSP     ,family = "gaussian",data = dt_temp) )
+  
+glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>% 
+  parameters::parameters(exp=F)
+
+kk<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
+plot_model(kk)
+
+print("Regressio Lineal Mitjanes de Diferència hba1c amb CLUSTER (Id_Centre")
+
+mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
+summary(mod_lineal_cluster)
+
+
+
+#library(sjmisc)
+#data(efc)
+#efc <- to_factor(efc, c161sex, e42dep, c172code)
+#m <- lm(neg_c_7 ~ pos_v_4 + c12hour + e42dep + c172code, data = efc)
+#m
+# simple forest plot
+#plot_model(m)
+
+print("Regressio Logística Incondicional hba1c<7%")
+
+
+glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>% 
   parameters::parameters(exp=T)
 
-ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc ,family = "binomial",data = dt_temp) 
-print(forest_model(ramo,factor_separate_line = TRUE))
+
+
+ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) 
+#print(forest_model(ramo,factor_separate_line = TRUE))
+plot_model(ramo)
 
 
 
 
+## Reg logistica condicional
+#
+#
+#
+#dt_temp<-
+#  dades_BASAL %>% 
+#  left_join(
+#    
+#    dades %>% filter(tipus=="Mes12") %>% 
+#      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
+#    by="pacient_id"
+#    
+#  )
+#
+#dt_temp<-
+#  dt_temp %>% 
+#    mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
+#
+#
+#dt_temp<-dt_temp%>%select(pacient_id,hba1cNGSP_7)
+#
+#dt_temp2<-dades%>%filter(tipus=="Mes00" | tipus=="Mes12")%>%left_join(dt_temp , "pacient_id")
+#  
+#mod2<-miceadds::glm.cluster(data=dt_temp2, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc,
+#                            cluster="pacient_id", family="binomial")
+#exp(summary(mod2))
+#
+##
 
-```
-
-## 2.2 Descriptiva per grupIntervencio Basal
-```{r Resultats4, include=T}
-
-#ii)
-
-
-
-#table1::table1(formu_2,
-#               data = dades_basal,caption="TAULA 2.Descriptiva Basal per grupIntervencio",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
-
-
-
-
-
-
-
-```
-## 2.3 Descriptiva    General
-```{r Resultats5, include=T}
-
-#iii)
-
-
-#table1::table1(formu_1,
-#               data = dades,caption="TAULA 1.Descriptiva GENERAL",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min,Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
+print("Regressio Logística Condicional hba1c<7%")
 
 
-#formula_taula_HISTORIC<-formula_compare("taula0",y="",taulavariables = conductor)
-
-#descrTable(formula_taula_HISTORIC,method = 2,Q1 = 0, Q3 =1 ,show.p.overall = F,data=dades,max.xlev = 40)%>%
-#  export2md(header.background = "grey", header.color = "white", size=12,caption = "TAULA 1.Descriptiva GENERAL")
+mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
+exp(summary(mod_cluster))
 
 
-
-
-```
 
 
 

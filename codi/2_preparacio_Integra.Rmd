@@ -376,6 +376,32 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
                                    altreMedicacioADO_id=="Si" ~ "Si",
                                    TRUE ~ NA_character_
                                    ))
+
+#Macro :[arteriopatiaPeriferica_id+cardiopatiaIsquemica_id+insuficienciaCardiaca_id+malaltiaCerebrovascular_id]
+#Micro :[nefropatiaDiabetica_id+neuropatiaDiabetica_id+retinopatiaDiabetica_id]
+
+#46 
+#altreMedicacioADO_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    arteriopatiaPeriferica_id = case_when(arteriopatiaPeriferica_id=="No" ~ "No",
+                                   arteriopatiaPeriferica_id=="Si" ~ "Si",
+                                   TRUE ~ NA_character_
+                                   ))
+
+
+TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((arteriopatiaPeriferica_id=="Si" |  
+                                                  cardiopatiaIsquemica_id=="Si" | 
+                                                  insuficienciaCardiaca_id=="Si" | 
+                                                  malaltiaCerebrovascular_id=="Si" )  ,"Si","No")) 
+
+TAULA_PLANA<-TAULA_PLANA%>%mutate(Micro=ifelse((nefropatiaDiabetica_id=="Si" |  
+                                                  neuropatiaDiabetica_id=="Si" |  
+                                                  retinopatiaDiabetica_id=="Si"  )  ,"Si","No")) 
+
+
+
+
+
 ################################ 
 
 
