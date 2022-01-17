@@ -81,6 +81,8 @@ library("forestmodel")
 library("sjmisc")
 library("devtools")
 library("sjPlot")
+library("jtools")
+
 # Funcions 
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
 devtools::source_url(link_source)
@@ -322,6 +324,7 @@ table1::table1(~ centre_id  | grupIntervencio,
 ```{r Resultats2, include=T}
 
 
+
 #dades_BASAL_lab %>% select(hba1cNGSP)
 
 #dades_final
@@ -403,38 +406,30 @@ table1::table1(~ hba1cNGSP_final,
 
 
 #-------------------------------------------------------------------------------------#
-
-
 print("Regressio Lineal Mitjanes de Diferència hba1c")
-
+#
 #devtools::install_github("strengejacke/sjPlot")
-
-
-#summary(glm(Dif~hba1cNGSP     ,family = "gaussian",data = dt_temp) )
-  
-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>% 
-  parameters::parameters(exp=F)
-
+#
+#
+# 
+glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>%parameters::parameters(exp=F)
+#summary(glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp))
 kk<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
 plot_model(kk)
 
 print("Regressio Lineal Mitjanes de Diferència hba1c amb CLUSTER (Id_Centre")
-
+#
 mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
 summary(mod_lineal_cluster)
 
+#
+#
+#
+#-------------------------------------------------------------------------------------#
 
 
-#library(sjmisc)
-#data(efc)
-#efc <- to_factor(efc, c161sex, e42dep, c172code)
-#m <- lm(neg_c_7 ~ pos_v_4 + c12hour + e42dep + c172code, data = efc)
-#m
-# simple forest plot
-#plot_model(m)
 
-
-#falta TOTAL,HDLC,LDLC [[BOGDAN]]
+#falta TOTAL,HDLC,LDLC [[BOGDAN]]???
 
 print("Regressio Logística Incondicional hba1c<7%")
 
@@ -450,43 +445,14 @@ plot_model(ramo)
 
 
 
-
-## Reg logistica condicional
-#
-#
-#
-#dt_temp<-
-#  dades_BASAL %>% 
-#  left_join(
-#    
-#    dades %>% filter(tipus=="Mes12") %>% 
-#      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
-#    by="pacient_id"
-#    
-#  )
-#
-#dt_temp<-
-#  dt_temp %>% 
-#    mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
-#
-#
-#dt_temp<-dt_temp%>%select(pacient_id,hba1cNGSP_7)
-#
-#dt_temp2<-dades%>%filter(tipus=="Mes00" | tipus=="Mes12")%>%left_join(dt_temp , "pacient_id")
-#  
-#mod2<-miceadds::glm.cluster(data=dt_temp2, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc,
-#                            cluster="pacient_id", family="binomial")
-#exp(summary(mod2))
-#
-##
-
 print("Regressio Logística Condicional hba1c<7%")
 
 
 mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
-exp(summary(mod_cluster))
 
-
+summary(mod_cluster)
+exp(confint(mod_cluster))
+exp(coef(mod_cluster))
 
 
 
