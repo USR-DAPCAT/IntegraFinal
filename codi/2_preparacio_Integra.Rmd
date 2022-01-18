@@ -424,8 +424,7 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
 
 
 
-TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((arteriopatiaPeriferica_id=="Si" |  
-                                                  cardiopatiaIsquemica_id=="Si" | 
+TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((  cardiopatiaIsquemica_id=="Si" | 
                                                   insuficienciaCardiaca_id=="Si" | 
                                                   malaltiaCerebrovascular_id=="Si" )  ,"Si","No")) 
 
