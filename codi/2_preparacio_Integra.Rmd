@@ -401,6 +401,29 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
                                    ))
 
 
+############################################################################################################################################
+#complicacions microvasculars A- Retinopatia diabètica B- Nefropatia diabètica o insuficiència renal crònica  C-Neuropatia diabètica  
+#
+#complicacions macrovasculars A- Cardiopatia isquèmica B- Malaltia cerebrovascular C- Arteriopatia perifèrica  D- Insuficiència cardíaca
+############################################################################################################################################
+ 
+
+#macro segun excel columnas:
+
+#arteriopatiaPeriferica_id
+#cardiopatiaIsquemica_id
+#insuficienciaCardiaca_id
+#malaltiaCerebrovascular_id
+
+
+#Micro segun excel columnas:
+
+#nefropatiaDiabetica_id   
+#neuropatiaDiabetica_id
+#retinopatiaDiabetica_id
+
+
+
 TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((arteriopatiaPeriferica_id=="Si" |  
                                                   cardiopatiaIsquemica_id=="Si" | 
                                                   insuficienciaCardiaca_id=="Si" | 

@@ -456,9 +456,12 @@ print("Regressio Logística Condicional hba1c<7%")
 mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
 
 summary(mod_cluster)
+
 exp(confint(mod_cluster))
 exp(coef(mod_cluster))
 
+#a <- mod_cluster$glm_res[1]
+#b <- mod_cluster$estimate[2]
 
 
 ```
