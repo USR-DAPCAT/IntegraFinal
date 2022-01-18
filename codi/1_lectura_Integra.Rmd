@@ -89,19 +89,105 @@ channel2<-odbcConnectAccess2007(here::here(directori_dades,"INTEGRABBDDJULIO0107
 #channel3 <- odbcConnectAccess(here::here(directori_dades,"integra_20190502_bbdd_original.mdb"))
 
 DT_COSTOSSANITARIS <- read_excel(here::here(directori_dades,"DT_COSTOSSANITARIS.xlsx"))
+#[1] "visita_id"                    "consExternaCopsRelDiabetesNo" "consExternaCopsRelDiabetesSi" "costDerivacions"              "costIncapacitatsTemp"        
+#[6] "costLaboratori"               "costMedicacio"                "costProfessionals"            "costProvesCompl"              "costTiresReactives"          
+#[11] "costVisites"                  "formComplet"                  "ingresCopsRelDiabetesNo"      "ingresCopsRelDiabetesSi"      "numTiresReact1Any"           
+#[16] "urgenciesCopsRelDiabetesNo"   "urgenciesCopsRelDiabetesSi"   "verificat"                    "consExterna_id"               "ingres_id"                   
+#[21] "urgencies_id"      
+
 DT_PACIENT_lab <- read_excel(here::here(directori_dades,"DT_PACIENT_lab_06.06.2020.xlsx"))
+#[1] "...1"                                       "pacient_id"                                 "codiIdentificacioPacient"                   "codiPacient"                               
+#[5] "estat"                                      "grupIntervencio"                            "usuari_id"                                  "centre_id"                                 
+#[9] "codiUBA"                                    "abrevCentre"                                "codiCentre"                                 "nomCentre"                                 
+#[13] "pacients"                                   "GR"                                         "dataCreacio"                                "dataConsentiment"                          
+#[17] "motiuNoConsentiment"                        "inclusioConsentiment_id"                    "inclusioDxDM2_id"                           "inclusioEdat3080_id"                       
+#[21] "inclusioHba1cGrau9minim_id"                 "inclusioSenseCanvisTt_id"                   "exclusioAltres_id"                          "exclusioDroguesAlcohol_id"                 
+#[25] "exclusioEmabarasLactancia_id"               "exclusioFarmacsMetabHidrocarb_id"           "exclusioHemoglobinapatiesAnemia_id"         "exclusioIMCSuperior45_id"                  
+#[29] "exclusioInsufCardiaca34NYHA_id"             "exclusioMalaltiaMentalDemencia_id"          "exclusioMalaltiaTerminal_id"                "exclusioParticipacioAssaigClinicFarmacs_id"
+#[33] "exclusioTransplRenalDialisis_id"            "exclusioTtFarmacsAprimar_id"                "exclusioTtGlucocorticoides_id"              "exclusioTtImmunosupresors_id"              
+#[37] "exclusioTtNeoplasiaMaligna_id"              "exclusioCanvisTt_id"                        "exclusioHba1cInferior9en3mesos_id"          "exclusioControlEndocrinoleg_id"            
+#[41] "dataFiEstudi"                               "finalitzaEstudi_id"                         "motiuFinalEstudi_id
+
+
 DT_QUESTIONARI_BPAAT <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_BPAAT.xlsx"))
+#[1] "visita_id"            "formComplet"          "totalBPAAT"           "verificat"            "activitatIntensa_id"  "activitatModerada_id"
+
 DT_QUESTIONARI_DTSQ <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_DTSQ.xlsx"))
+#[1] "visita_id"                 "formComplet"               "pregFrequenciaSucreAlt"    "pregFrequenciaSucreBaix"   "pregRecomenacioTractament" "pregSatisfConeixMalaltia" 
+#[7] "pregSatisfContTtActual"    "pregSatisfaccioTtActual"   "pregTractamentFlexible"    "pregTractamentPractic"     "totalDTSQ"                 "verificat"
+
+
 DT_QUESTIONARI_EQ5D <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_EQ5D.xlsx"))
+#[1] "visita_id"                 "activitatPrincipalDescrip" "codiPostal"                "edat"                      "escalaAVSalut"             "formComplet"              
+#[7] "treballSalutSocialDescrip" "verificat"                 "activitatPrincipal_id"     "estudisRealitzats_id"      "expMalGreuAltres_id"       "expMalGreuFamiliar_id"    
+#[13] "expMalGreuPersonal_id"     "fumador_id"                "pregAnsietat_id"           "pregCuraPersonal_id"       "pregDolor_id"              "pregMovilitat_id"         
+#[19] "pregQuotidianes_id"        "sexe_id"                   "treballSalutSocial_id"    
+
+
 DT_QUESTIONARI_PAM <- read_excel(here::here(directori_dades,"DT_QUESTIONARI_PAM.xlsx"))
+#[1] "visita_id"                   "formComplet"                 "totalPAM"                    "verificat"                   "pregAutoMedicacio_id"        "pregConeixMedicaments_id"   
+#[7] "pregConeixTtsDisponibles_id" "pregEntenPSiCauses_id"       "pregEstilVidaEstres_id"      "pregEvitarPS_id"             "pregEvitarReduirPS_id"       "pregHabitsSaludables_id"    
+#[13] "pregInformarMetge_id"        "pregPaperActiu_id"           "pregResponsable_id"          "pregSeguiTtCasa_id"          "pregSolucioNousPS_id"    
+
+
 DT_VISITA_HISTORIC_PLANA_lab <- read_excel(here::here(directori_dades,"DT_VISITA_HISTORIC_PLANA_lab_06.02.2020.xlsx"))
-LT_RESPOSTA_PAM <- read_excel(here::here(directori_dades,"LT_RESPOSTA_PAM.xlsx"))
+#[1] "...1"                                      "tipus"                                     "visita_id"                                 "completa"                                 
+#  [5] "dataVisita"                                "dataNaixement"                             "edat"                                      "sexe_id"                                  
+#  [9] "etnia_id"                                  "altresEtniaDescrip"                        "problemesSalut_id"                         "clinicalRiskGroup"                        
+#[13] "duracioDiabetesAnys"                       "duracioDiabetesMesos"                      "duracioDiabetesMesos2"                     "grupMorbiditatAjustada"                   
+#[17] "dislipemia_id"                             "dataDxDislipemia"                          "hta_id"                                    "dataDxHta"                                
+#[21] "altresProblemesSalut_id"                   "altresProblemesSalutDescrip"               "PATOLOGIATIROIDALBASAL_id_ALTRES"          "MPOCBASAL_id_ALTRES"                      
+#[25] "MALALTIESMENTALSBASAL_id_ALTRES"           "CARDIOPATIAISQUEMICABASAL_id_ALTRES"       "RETINOPATIADIABETICABASAL_id_ALTRES"       "DISFUNCIOSEXUALBASAL_id_ALTRES"           
+#[29] "NEOPLASIESBASAL_id_ALTRES"                 "PEUDIABETICBASAL_id_ALTRES"                "AMPUTACIONSBASAL_id_ALTRES"                "freqCardiaca"                             
+#[33] "imc"                                       "perimetreCintura"                          "pes"                                       "talla"                                    
+#[37] "tensioDiastolica"                          "tensioSistolica"                           "tensioBrac_id"                             "antiagregantsPlaquetaris_id"              
+#[41] "anticoagulants_id"                         "antihipertensius_id"                       "hipolemiants_id"                           "altreMedicacioGral_id"                    
+#[45] "altreMedicacioGral_id_ALTRES"              "antiagregantsPlaquetaris_id_ALTRES"        "anticoagulants_id_ALTRES"                  "antihipertensius_id_ALTRES"               
+#[49] "hipolemiants_id_ALTRES"                    "ANTIDEPRESSANTS_id_ALTRES"                 "ANTIPSYCHOTICS_id_ALTRES"                  "ANTIEPILEPTICS_id_ALTRES"                 
+#[53] "ANXIOLYTICS_id_ALTRES"                     "OPIOIDS_id_ALTRES"                         "CORTICOSTEROIDS_id_ALTRES"                 "OTHERANALGESICSANDANTIPYRETICS_id_ALTRES" 
+#[57] "NSAID_ALTRES"                              "ADRENERGICS_INHALANTS_id_ALTRES"           "THYROIDPREPARATIONS_id_ALTRES"             "HORMONES_id_ALTRES"                       
+#[61] "adoAcarbosa_id"                            "adoCanagliflozina_id"                      "adoClorpopramida_id"                       "adoCombiGlimepiridaPioglitazona_id"       
+#[65] "adoCombiMetforminaPioglitazona_id"         "adoCombiMetforminaSaxaglitina_id"          "adoCombiMetforminaSitagliptina_id"         "adoCombiMetforminaVildagliptina_id"       
+#[69] "adoDapagliflozina_id"                      "adoEmpagliflozina_id"                      "adoGlibenclamida_id"                       "adoGlibornurida_id"                       
+#[73] "adoGliclazida_id"                          "adoGlimepirida_id"                         "adoGlipizida_id"                           "adoGliquidona_id"                         
+#[77] "adoLinagliptina_id"                        "adoMetformina_id"                          "adoMiglitol_id"                            "adoNateglinida_id"                        
+#[81] "adoPioglitazona_id"                        "adoRepaglinida_id"                         "adoSaxagliptina_id"                        "adoSitagliptina_id"                       
+#[85] "adoTolbutamida_id"                         "adoVildagliptina_id"                       "altreMedicacioADO_id"                      "adoCombiMetforminaLinaglibtina_id_ALTRES" 
+#[89] "adoCombiMetforminaAlogliptina_id_ALTRES"   "adoAlogliptina_id_ALTRES"                  "adoCombiAlogliptinaPioglitazona_id_ALTRES" "adoCombMetforminaEmpaglifozina_id_ALTRES" 
+#[93] "adoCombMetforminaDapaglifozina_id_ALTRES"  "injAbasaglar_id"                           "injAbiglutida_id"                          "injActrapid_id"                           
+#[97] "injApidra_id"                              "injExenatida_id"                           "injHumalog_id"                             "injHumalogBasal_id"                       
+#[101] "injHumalogMix25_id"                        "injHumalogMix50_id"                        "injHumilana3070_id"                        "injHumulinaNPH_id"                        
+#[105] "injHumulinaRegular_id"                     "injInsulatard_id"                          "injLantus_id"                              "injLevemir_id"                            
+#[109] "injLiraglutida_id"                         "injLixisenatide_id"                        "injMixtard30_id"                           "injNovomix30_id"                          
+#[113] "injNovomix50_id"                           "injNovomix70_id"                           "injNovorapid_id"                           "altreMedicacioInjInsulina_id"             
+#[117] "injToujeo_id_ALTRES"                       "injTresiba_id_ALTRES"                      "injExenatida_id_ALTRES"                    "injAbasaglar_id_ALTRES"                   
+#[121] "dataAnalitica"                             "glucosa"                                   "hba1cIFCC"                                 "hba1cNGSP"                                
+#[125] "alt"                                       "ast"                                       "ggt"                                       "colesterolHdl"                            
+#[129] "colesterolLdl"                             "colesterolNoHdl"                           "colesterolTtl"                             "triglicerids"                             
+#[133] "volumCorpuscularMig"                       "hematocrit"                                "hemoglobina"                               "hemoglobinaCorpuscularMitja"              
+#[137] "ide"                                       "hematies"                                  "leucocits"                                 "plaquetes"                                
+#[141] "linfocits"                                 "monocits"                                  "neutrofils"                                "eosinofils"                               
+#[145] "basofils"                                  "creatinina"                                "filtratGlomerular"                         "filtratGlomerularSuperior60"              
+#[149] "orinaCreatinina"                           "orinaMicroalbuminuria"                     "orinaMicroalbuminuriaCreatinina"           "cigarretsDia"                             
+#[153] "dataFiTabac"                               "dataIniciTabac"                            "fumador_id"                                "motiuNoSeguiment"                         
+#[157] "seguimentRecomenacions_id"                 "arteriopatiaPeriferica_id"                 "cardiopatiaIsquemica_id"                   "insuficienciaCardiaca_id"                 
+#[161] "malaltiaCerebrovascular_id"                "nefropatiaDiabetica_id"                    "neuropatiaDiabetica_id"                    "retinopatiaDiabetica_id"                  
+#[165] "altresComplicacions_id"                    "PATOLOGIATIROIDAL_id_ALTRES"               "MPOC_id_ALTRES"                            "MALALTIESMENTALS_id_ALTRES"               
+#[169] "DISFUNCIOSEXUAL_id_ALTRES"                 "NEOPLASIES_id_ALTRES"                      "PEUDIABETIC_id_ALTRES"                     "AMPUTACIONS_id_ALTRES"                    
+#[173] "ingresCopsRelDiabetesNo"                   "ingresCopsRelDiabetesSi"                   "urgenciesCopsRelDiabetesNo"                "urgenciesCopsRelDiabetesSi"               
+#[177] "ingres_id"                                 "urgencies_id"                              "consExterna_id"                            "consExternaCopsRelDiabetesNo"             
+#[181] "consExternaCopsRelDiabetesSi"              "numTiresReact1Any"                         "costDerivacions"                           "costIncapacitatsTemp"                     
+#[185] "costLaboratori"                            "costMedicacio"                             "costProfessionals"                         "costProvesCompl"                          
+#[189] "costTiresReactives"                        "costVisites"            
+
+#LT_RESPOSTA_PAM <- read_excel(here::here(directori_dades,"LT_RESPOSTA_PAM.xlsx"))
+
 
 
 DT_VISITA<- sqlQuery( channel2, paste ("select * from DT_VISITA "))
 DT_VISITA<-DT_VISITA%>%mutate(pacient_id=pacient_pacient_id)%>%dplyr::select(tipus,pacient_id,visita_id,completa,dataVisita)
 DT_VISITA<-DT_VISITA%>%select(pacient_id,visita_id)
-
+#[1] "Id"                 "tipus"              "visita_id"          "completa"           "dataVisita"         "pacient_pacient_id" "pacient_id" 
 
 
 
@@ -427,8 +513,14 @@ DT_VISITA<-DT_VISITA%>%select(pacient_id,visita_id)
 
 
 
+prova<-DT_VISITA_HISTORIC_PLANA_lab%>%
+  arrange(visita_id)%>%
+  group_by(visita_id)%>% slice(1) %>% ungroup() %>%dplyr::select(visita_id,sexe_id)%>%
+    left_join(DT_VISITA   ,by="visita_id")%>%filter(tipus=="Mes00")%>%
+     left_join(DT_QUESTIONARI_EQ5D   ,by="visita_id")%>%select(visita_id,pacient_pacient_id,sexe_id.x,sexe_id.y)
+     
 
-
+#ok!!!
 
 ```
 
@@ -601,7 +693,7 @@ DT_QUESTIONARI_BPAAT<-DT_QUESTIONARI_BPAAT%>%dplyr::select(-formComplet,-verific
 DT_QUESTIONARI_DTSQ<-DT_QUESTIONARI_DTSQ%>%dplyr::select(-formComplet,-verificat)	   
 DT_QUESTIONARI_EQ5D<-DT_QUESTIONARI_EQ5D%>%dplyr::select(-formComplet,-verificat)	   
 DT_QUESTIONARI_PAM<-DT_QUESTIONARI_PAM%>%dplyr::select(-formComplet,-verificat)	   
-LT_RESPOSTA_PAM<-LT_RESPOSTA_PAM   
+#LT_RESPOSTA_PAM<-LT_RESPOSTA_PAM   
 DT_VISITA<-DT_VISITA
 
 #DT_DEMOGRAFIA<-DT_COSTOSSANITARIS%>%dplyr::select(-formComplet,-verificat,-Id)		
@@ -749,8 +841,8 @@ variable.names(DT_VISITA_HISTORIC_FINAL)
 TAULA_PLANA<-DT_VISITA_HISTORIC_FINAL
 
 
-K<- as.vector(variable.names(TAULA_PLANA))
-write.csv(K, file="K.csv")
+#K<- as.vector(variable.names(TAULA_PLANA))
+#write.csv(K, file="K.csv")
 
 
 
