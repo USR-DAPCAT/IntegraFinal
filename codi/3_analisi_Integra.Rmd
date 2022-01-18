@@ -280,10 +280,15 @@ formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conduct
 formu_3<-formula_compare("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
 
 
+#table1::table1(formu_2,
+#               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+
 table1::table1(formu_2,
                data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
 
