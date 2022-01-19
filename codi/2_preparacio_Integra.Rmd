@@ -86,9 +86,11 @@ TAULA_PLANA<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% a
 
 #TAULA_PLANA$duracioDiabetesMesos
 TAULA_PLANA$duracioDiabetesMesos2<-as.numeric(TAULA_PLANA$duracioDiabetesMesos2)
+TAULA_PLANA$duracioDiabetesAnys<-as.numeric(TAULA_PLANA$duracioDiabetesAnys)
 #TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos=if_na(duracioDiabetesMesos,0))
 #TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesMesos2=duracioDiabetesAnys*12+duracioDiabetesMesos)
 TAULA_PLANA<-TAULA_PLANA%>%mutate(duracioDiabetesAnys2=duracioDiabetesMesos2/12)
+
 
 TAULA_PLANA$duracioDiabetesMesos2<-as.numeric(TAULA_PLANA$duracioDiabetesMesos2)
 TAULA_PLANA$edat<-as.numeric(TAULA_PLANA$edat)
@@ -98,6 +100,8 @@ TAULA_PLANA$tensioSistolica<-as.numeric(TAULA_PLANA$tensioSistolica)
 TAULA_PLANA$hba1cIFCC<-as.numeric(TAULA_PLANA$hba1cIFCC)
 TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
 
+
+#kkk<-TAULA_PLANA%>%select(visita_id,duracioDiabetesMesos2,duracioDiabetesAnys,duracioDiabetesAnys2)
 
 #TAULA_PLANA<-mutate_at(TAULA_PLANA, vars( starts_with("ado") ), funs( if_else(.=="---"   ,0,1)))
 #

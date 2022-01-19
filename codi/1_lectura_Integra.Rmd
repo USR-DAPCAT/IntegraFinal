@@ -513,11 +513,11 @@ DT_VISITA<-DT_VISITA%>%select(pacient_id,visita_id)
 
 
 
-prova<-DT_VISITA_HISTORIC_PLANA_lab%>%
-  arrange(visita_id)%>%
-  group_by(visita_id)%>% slice(1) %>% ungroup() %>%dplyr::select(visita_id,sexe_id,tipus)%>%
-    left_join(DT_VISITA   ,by="visita_id")%>%filter(tipus=="Mes00")%>%
-     left_join(DT_QUESTIONARI_EQ5D   ,by="visita_id")%>%select(visita_id,pacient_id,sexe_id.x,sexe_id.y)
+#prova<-DT_VISITA_HISTORIC_PLANA_lab%>%
+#  arrange(visita_id)%>%
+#  group_by(visita_id)%>% slice(1) %>% ungroup() %>%dplyr::select(visita_id,sexe_id,tipus)%>%
+#    left_join(DT_VISITA   ,by="visita_id")%>%filter(tipus=="Mes00")%>%
+#     left_join(DT_QUESTIONARI_EQ5D   ,by="visita_id")%>%select(visita_id,pacient_id,sexe_id.x,sexe_id.y)
      
 
 #ok!!!

@@ -38,7 +38,49 @@ params:
 **agregacions i part global descriptiva**
 
 
-&check; xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx <br/>
+&check;  S ha de mirar:  adoAlogliptina_id_ALTRES 
+ adoCombiAlogliptinaPioglitazona_id_ALTRES 
+ adoCombiMetforminaAlogliptina_id_ALTRES 
+ adoCombiMetforminaLinaglibtina_id_ALTRES 
+ adoCombMetforminaDapaglifozina_id_ALTRES 
+ adoCombMetforminaEmpaglifozina_id_ALTRES 
+ ADRENERGICS_INHALANTS_id_ALTRES 
+ altreMedicacioGral_id_ALTRES 
+ AMPUTACIONS_id_ALTRES 
+ AMPUTACIONSBASAL_id_ALTRES 
+ antiagregantsPlaquetaris_id_ALTRES 
+ anticoagulants_id_ALTRES 
+ ANTIDEPRESSANTS_id_ALTRES 
+ ANTIEPILEPTICS_id_ALTRES 
+ antihipertensius_id_ALTRES 
+ ANTIPSYCHOTICS_id_ALTRES 
+ ANXIOLYTICS_id_ALTRES 
+ CARDIOPATIAISQUEMICABASAL_id_ALTRES 
+ CORTICOSTEROIDS_id_ALTRES 
+ DISFUNCIOSEXUAL_id_ALTRES 
+ DISFUNCIOSEXUALBASAL_id_ALTRES 
+ hipolemiants_id_ALTRES 
+ HORMONES_id_ALTRES 
+ injAbasaglar_id_ALTRES 
+ injExenatida_id_ALTRES 
+ injToujeo_id_ALTRES 
+ injTresiba_id_ALTRES 
+ insuficienciaCardiaca_id 
+ MALALTIESMENTALS_id_ALTRES 
+ MALALTIESMENTALSBASAL_id_ALTRES 
+ MPOC_id_ALTRES 
+ MPOCBASAL_id_ALTRES 
+ NEOPLASIES_id_ALTRES 
+ NEOPLASIESBASAL_id_ALTRES 
+ NSAID_ALTRES 
+ OTHERANALGESICSANDANTIPYRETICS_id_ALTRES 
+ PATOLOGIATIROIDAL_id_ALTRES 
+ PATOLOGIATIROIDALBASAL_id_ALTRES 
+ PEUDIABETIC_id_ALTRES 
+ PEUDIABETICBASAL_id_ALTRES 
+ RETINOPATIADIABETICABASAL_id_ALTRES 
+ THYROIDPREPARATIONS_id_ALTRES 
+ <br/>
 
 
 Desembre / 2021
@@ -266,6 +308,14 @@ dades<-dades%>% refcat(conductor = conductor,ref = "refcat")
 # DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta1")
 
 
+#repàs Altres!
+
+table(dades$cardiopatiaIsquemica_id)
+table(dades$CARDIOPATIAISQUEMICABASAL_id_ALTRES)
+
+
+
+
 ```
 
 ## 2. Descriptiva Basal
@@ -326,10 +376,9 @@ table1::table1(~ centre_id  | grupIntervencio,
 
 ## 3. Analisis de l'outcome (Change from baseline in HbA1c)
 
-```{r Resultats2, include=T}
+### 3.1 t-test Diferencia de mitjanes entre Basal i Final, dins de cada grup
 
-
-
+```{r Resultats2, include=T, results='asis'}
 #dades_BASAL_lab %>% select(hba1cNGSP)
 
 #dades_final
@@ -366,24 +415,28 @@ dt_temp<-
   dt_temp %>% 
     mutate(Dif=hba1cNGSP_final-hba1cNGSP)
 
+
+
 dt_temp_s<-dt_temp%>%filter(grupIntervencio=="Sham")
 dt_temp_i<-dt_temp%>%filter(grupIntervencio=="Intervention")
 
-print("t-test Diferencia de mitjanes entre Basal i Final,Grup Sham")
+print("### t-test Diferencia de mitjanes entre Basal i Final,Grup Sham")
 
 mean(dt_temp_s$Dif, na.rm=TRUE)
 t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
 
-print("t-test Diferencia de mitjanes entre Basal i Final,Grup Intervention")
+print("### t-test Diferencia de mitjanes entre Basal i Final,Grup Intervention")
 
 
 mean(dt_temp_i$Dif, na.rm=TRUE)
 t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
 
-#TAULA 
 
+#TAULA
+```
 
-
+### 3.2 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
+```{r Resultats3, include=T}
 table1::table1(~ hba1cNGSP,
                data = dt_temp_i,caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
@@ -407,58 +460,79 @@ table1::table1(~ hba1cNGSP_final,
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
+```
 
+### 3.3 Regressio Lineal Mitjanes de Diferència hba1c
 
-
+```{r Resultats4, include=T}
 #-------------------------------------------------------------------------------------#
 print("Regressio Lineal Mitjanes de Diferència hba1c")
-#
+
 #devtools::install_github("strengejacke/sjPlot")
-#
-#
-# 
+
 glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>%parameters::parameters(exp=F)
-#summary(glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp))
+
 kk<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
 plot_model(kk)
 
+```
+
+### 3.4 Regressio Lineal Mitjanes de Diferència hba1c amb Cluster.
+
+```{r Resultats5, include=T}
 print("Regressio Lineal Mitjanes de Diferència hba1c amb CLUSTER (Id_Centre")
 #
 mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
 summary(mod_lineal_cluster)
 
-#
-#
-#
-#-------------------------------------------------------------------------------------#
+```
 
 
+### 3.5 Regressio Logística Incondicional hba1c<7%
 
+```{r Resultats6, include=T}
 #falta TOTAL,HDLC,LDLC [[BOGDAN]]???
 
 print("Regressio Logística Incondicional hba1c<7%")
 
 
-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>% 
+glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>% 
   parameters::parameters(exp=T)
 
 
 
-ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) 
+ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) 
 #print(forest_model(ramo,factor_separate_line = TRUE))
 plot_model(ramo)
+```
 
+### 3.6 Regressio Logística Condicional hba1c<7%
 
+```{r Resultats7, include=T}
 
 print("Regressio Logística Condicional hba1c<7%")
 
 
-mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys2+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
+mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
 
 summary(mod_cluster)
 
-exp(confint(mod_cluster))
-exp(coef(mod_cluster))
+
+
+### Taula de coeficients
+
+coef<-exp(confint(mod_cluster)) %>% row.names()
+
+taula_coef=exp(confint(mod_cluster)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols(exp(coef(mod_cluster))) %>% 
+  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  filter(var!="(Intercept)") %>% 
+  kable(caption="Reg logistica Condicional",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+
 
 #a <- mod_cluster$glm_res[1]
 #b <- mod_cluster$estimate[2]
