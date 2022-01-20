@@ -173,6 +173,10 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
     hta_id = case_when(hta_id=="No" ~ "No",
                                    hta_id=="Si" ~ "Si",
                                    TRUE ~ "No"))
+
+
+
+
 #12
 #dislipemia_id 
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
@@ -184,13 +188,22 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
     insuficienciaCardiaca_id = case_when(insuficienciaCardiaca_id=="No" ~ "No",
                                    insuficienciaCardiaca_id=="Si" ~ "Si",
-                                   TRUE ~ "No"))
+                                   TRUE ~"No"))
 #14          
 #cardiopatiaIsquemica_id 
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
     cardiopatiaIsquemica_id  = case_when(cardiopatiaIsquemica_id =="No" ~ "No",
                                    cardiopatiaIsquemica_id =="Si" ~ "Si",
                                    TRUE ~ "No"))
+
+#14          
+#cardiopatiaIsquemica_id 
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    CARDIOPATIAISQUEMICABASAL_id_ALTRES  = case_when(CARDIOPATIAISQUEMICABASAL_id_ALTRES =="No" ~ "No",
+                                   CARDIOPATIAISQUEMICABASAL_id_ALTRES =="Si" ~ "Si",
+                                   TRUE ~ "No"))
+
+
 #15          
 #malaltiaCerebrovascular_id  
 TAULA_PLANA<-TAULA_PLANA %>% mutate(
@@ -405,6 +418,15 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
                                    ))
 
 
+#50 
+#altreMedicacioADO_id
+TAULA_PLANA<-TAULA_PLANA %>% mutate(
+    hipolemiants_id = case_when(hipolemiants_id=="No" ~ "No",
+                                   hipolemiants_id=="Si" ~ "Si",
+                                  hipolemiants_id=="si" ~ "Si",
+                                   TRUE ~ "No"
+                                   ))
+
 ############################################################################################################################################
 #complicacions microvasculars A- Retinopatia diabètica B- Nefropatia diabètica o insuficiència renal crònica  C-Neuropatia diabètica  
 #
@@ -428,9 +450,9 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
 
 
 
-TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((  cardiopatiaIsquemica_id=="Si" | 
+TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((  CARDIOPATIAISQUEMICABASAL_id_ALTRES=="Si" | 
                                                   insuficienciaCardiaca_id=="Si" | 
-                                                  malaltiaCerebrovascular_id=="Si" )  ,"Si","No")) 
+                                                  malaltiaCerebrovascular_id=="Si")  ,"Si","No")) 
 
 TAULA_PLANA<-TAULA_PLANA%>%mutate(Micro=ifelse((nefropatiaDiabetica_id=="Si" |  
                                                   neuropatiaDiabetica_id=="Si" |  
@@ -439,8 +461,38 @@ TAULA_PLANA<-TAULA_PLANA%>%mutate(Micro=ifelse((nefropatiaDiabetica_id=="Si" |
 
 
 
+## Generació de NIAD
+pp<-read_conductor(here::here("Integra_Conductor2.xls")) %>% select(tipo,camp) %>% filter(tipo=="DT_MEDICACIO_NIAD") %>% pull(camp)
+pp<-pp[pp%in%names(TAULA_PLANA)]
 
-################################ 
+TAULA_PLANA<-
+  TAULA_PLANA %>% comptar_valors(pp,"Si") %>% 
+  mutate(NIAD=if_else(num_valors>=1,"Si","No"))
+
+## Generació de ISULINA
+pp<-read_conductor(here::here("Integra_Conductor2.xls")) %>% select(tipo,camp) %>% filter(tipo=="DT_MEDICACIO_INSULINA") %>% pull(camp)
+pp<-pp[pp%in%names(TAULA_PLANA)]
+
+TAULA_PLANA<-
+  TAULA_PLANA %>% comptar_valors(pp,"Si") %>% 
+  mutate(INSULIN=if_else(num_valors>=1,"Si","No"))
+
+## Generacio de INSULINA + NIAD
+TAULA_PLANA<-TAULA_PLANA %>% mutate(NIAD_INSULIN=if_else(INSULIN=="Si" & NIAD=="Si","Si","No"))
+
+## Generacio de Tx Dieta (No INSULINA + No NIAD)
+TAULA_PLANA<-TAULA_PLANA %>% mutate(LIFE_STYLE=if_else(INSULIN=="No" & NIAD=="No","Si","No"))
+
+
+## vERIFICACIONS
+
+table(TAULA_PLANA$LIFE_STYLE)
+
+table(TAULA_PLANA$INSULIN,TAULA_PLANA$NIAD)
+table(TAULA_PLANA$NIAD)
+table(TAULA_PLANA$kk)
+
+
 
 
 

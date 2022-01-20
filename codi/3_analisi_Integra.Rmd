@@ -385,6 +385,7 @@ table1::table1(~ centre_id  | grupIntervencio,
 #dades_MES03
 #dades_MES06
 
+
 dt_temp<-
   dades %>% 
   select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>% 
@@ -437,29 +438,37 @@ t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "tw
 
 ### 3.2 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
 ```{r Resultats3, include=T}
-table1::table1(~ hba1cNGSP,
-               data = dt_temp_i,caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
 
-table1::table1(~ hba1cNGSP_final,
-               data = dt_temp_i,caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
+M12<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes12")
+M00<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes00")
+
 
 table1::table1(~ hba1cNGSP,
-               data = dt_temp_s,caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
+               data = M00%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+table1::table1(~ hba1cNGSP,
+               data = M12%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
-table1::table1(~ hba1cNGSP_final,
-               data = dt_temp_s,caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
+
+
+table1::table1(~ hba1cNGSP,
+               data = M00%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
+table1::table1(~ hba1cNGSP,
+               data = M12%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+
+
 ```
 
 ### 3.3 Regressio Lineal Mitjanes de Diferència hba1c
