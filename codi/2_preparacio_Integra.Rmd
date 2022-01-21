@@ -100,6 +100,14 @@ TAULA_PLANA$tensioSistolica<-as.numeric(TAULA_PLANA$tensioSistolica)
 TAULA_PLANA$hba1cIFCC<-as.numeric(TAULA_PLANA$hba1cIFCC)
 TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
 
+```
+
+```{r recodificacions2,include=F}
+
+
+
+
+
 
 #kkk<-TAULA_PLANA%>%select(visita_id,duracioDiabetesMesos2,duracioDiabetesAnys,duracioDiabetesAnys2)
 
@@ -113,6 +121,10 @@ TAULA_PLANA$hba1cNGSP<-as.numeric(TAULA_PLANA$hba1cNGSP)
 #          TRUE ~ 0
 #     ))
 ################################
+
+
+
+
 #1
 #edat 
 #2
@@ -427,6 +439,13 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
                                    TRUE ~ "No"
                                    ))
 
+```
+
+```{r recodificacions3,include=F}
+
+
+
+
 ############################################################################################################################################
 #complicacions microvasculars A- Retinopatia diabètica B- Nefropatia diabètica o insuficiència renal crònica  C-Neuropatia diabètica  
 #
@@ -470,29 +489,39 @@ TAULA_PLANA<-
   mutate(NIAD=if_else(num_valors>=1,"Si","No"))
 
 ## Generació de ISULINA
+## Generacio de INSULINA + NIAD
 pp<-read_conductor(here::here("Integra_Conductor2.xls")) %>% select(tipo,camp) %>% filter(tipo=="DT_MEDICACIO_INSULINA") %>% pull(camp)
 pp<-pp[pp%in%names(TAULA_PLANA)]
 
 TAULA_PLANA<-
   TAULA_PLANA %>% comptar_valors(pp,"Si") %>% 
-  mutate(INSULIN=if_else(num_valors>=1,"Si","No"))
+  mutate(INSULIN=if_else(num_valors>=1 & NIAD=="No" ,"Si","No"))
+
 
 ## Generacio de INSULINA + NIAD
-TAULA_PLANA<-TAULA_PLANA %>% mutate(NIAD_INSULIN=if_else(INSULIN=="Si" & NIAD=="Si","Si","No"))
+TAULA_PLANA<-
+  TAULA_PLANA %>%mutate(NIAD_INSULIN=if_else(num_valors>=1 & NIAD=="Si" ,"Si","No"))
 
 ## Generacio de Tx Dieta (No INSULINA + No NIAD)
-TAULA_PLANA<-TAULA_PLANA %>% mutate(LIFE_STYLE=if_else(INSULIN=="No" & NIAD=="No","Si","No"))
+pp<-read_conductor(here::here("Integra_Conductor2.xls")) %>% select(tipo,camp) %>% filter(tipo=="DT_MEDICACIO_NIAD+insulina") %>%pull(camp)
+pp<-pp[pp%in%names(TAULA_PLANA)]
+
+
+#???
+
+#TAULA_PLANA<-
+#  TAULA_PLANA %>% comptar_valors(pp,"Si") %>% 
+#  mutate(LIFE_STYLE=if_else(num_valors>=1 ,"No","Si"))
 
 
 ## vERIFICACIONS
 
-table(TAULA_PLANA$LIFE_STYLE)
+#table(TAULA_PLANA$NIAD)
+#table(TAULA_PLANA$NIAD_INSULIN)
+#table(TAULA_PLANA$INSULIN)
+#table(TAULA_PLANA$LIFE_STYLE)
 
-table(TAULA_PLANA$INSULIN,TAULA_PLANA$NIAD)
-table(TAULA_PLANA$NIAD)
-table(TAULA_PLANA$kk)
-
-
+##
 
 
 
