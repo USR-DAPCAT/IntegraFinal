@@ -272,17 +272,77 @@ dades<-dades%>% refcat(conductor = conductor,ref = "refcat")
 
 #repàs Altres!
 
-table(dades$cardiopatiaIsquemica_id)
-table(dades$CARDIOPATIAISQUEMICABASAL_id_ALTRES)
+#table(dades$cardiopatiaIsquemica_id)
+#table(dades$CARDIOPATIAISQUEMICABASAL_id_ALTRES)
 
 
+dt_temp<-
+  dades %>% 
+  select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>% 
+  arrange(pacient_id) %>% 
+  na.omit()
+
+
+#dt_temp
+
+
+## Reg logistica incondicional
+
+dt_temp<-
+  dades_BASAL %>% 
+  left_join(
+      dades %>% filter(tipus=="Mes12") %>% 
+      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
+    by="pacient_id")
+    
+  
+
+dt_temp<-
+  dt_temp %>% 
+    mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
+
+dt_temp<-
+  dt_temp %>% 
+    mutate(hba1cNGSP_8=if_else(hba1cNGSP_final<8,1,0))
+
+dt_temp<-
+  dt_temp %>% 
+    mutate(Dif=hba1cNGSP_final-hba1cNGSP)
+
+
+
+dt_temp_s<-dt_temp%>%filter(grupIntervencio=="Sham")
+dt_temp_i<-dt_temp%>%filter(grupIntervencio=="Intervention")
+
+
+
+
+dt_temp<-
+  dt_temp%>% 
+    mutate(hba1cNGSP_7c=if_else(hba1cNGSP_7==1,"Si","No"))
+
+dt_temp<-
+  dt_temp%>% 
+    mutate(hba1cNGSP_8c=if_else(hba1cNGSP_8==1,"Si","No"))
+
+
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent<-dt_temp%>%select(pacient_id,tipus,grupIntervencio,sexe_id,edat,hba1cNGSP_7,hba1cNGSP_7c,hba1cNGSP_8,hba1cNGSP_8c)%>%
+  arrange(pacient_id) %>% na.omit()
+#
+dt_temp_percent<-dt_temp_percent%>% mutate(sexe_id2=case_when(sexe_id=="Hombre"~"Home",sexe_id=="Mujer"~"Dona"))
+dt_temp_percent<-dt_temp_percent%>% mutate(edat2=case_when(edat<65~"<65 anys",edat>=65~">=65 anys"))
+#
 
 
 ```
 
 ## 2. Descriptiva Basal
 
-```{r Resultats0, include=T}
+```{r Resultats1, include=T}
 
 #i)
 
@@ -319,8 +379,108 @@ table1::table1(formu_2,
 
 ```
 
-```{r Resultats1, include=T}
 
+### 2.1 Percentatge de pacients de cada grup de tractament que assoleixen l'objectiu d'HbA1c < 7%
+
+```{r Resultats2, include=T}
+
+
+
+table1::table1(~ hba1cNGSP_7c | grupIntervencio,
+               data =dt_temp_percent,caption="",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+#
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_7c, group=interaction( grupIntervencio), fill=grupIntervencio)) + 
+   geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+    geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+     scale_y_continuous(limits=c(0,1),labels = scales::percent) +
+        labs(title="Grup ", x ="hba1c<7%", y = "Percentatge")
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_7c, group=interaction(sexe_id2, grupIntervencio), fill=grupIntervencio)) + 
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+        scale_y_continuous(limits=c(0,1),labels = scales::percent)+
+          labs(title="Grup per Sexe", x ="hba1c<7%", y = "Percentatge")+
+            facet_grid(~sexe_id2) 
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_7c, group=interaction(edat2, grupIntervencio), fill=grupIntervencio)) + 
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+        scale_y_continuous(limits=c(0,1),labels = scales::percent) +
+          labs(title="Grup per Edat", x ="hba1c<7%", y = "Percentatge")+
+            facet_grid(~edat2) 
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
+
+
+```
+
+### 2.2 Percentatge de pacients de cada grup de tractament que assoleixen l'objectiu d'HbA1c < 8%
+
+```{r Resultats3, include=T}
+# Basic barplot
+
+
+table1::table1(~ hba1cNGSP_8c | grupIntervencio,
+               data =dt_temp_percent,caption="",
+               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+               render.categorical="FREQ (PCTnoNA%)",
+               topclass="Rtable1-zebra")
+
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_8c, group=interaction( grupIntervencio), fill=grupIntervencio)) + 
+   geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+    geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+     scale_y_continuous(limits=c(0,1),labels = scales::percent) +
+        labs(title="Grup ", x ="hba1c<8%", y = "Percentatge")
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_8c, group=interaction(sexe_id2, grupIntervencio), fill=grupIntervencio)) + 
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+        scale_y_continuous(limits=c(0,1),labels = scales::percent)+
+          labs(title="Grup per Sexe", x ="hba1c<8%", y = "Percentatge")+
+            facet_grid(~sexe_id2) 
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+dt_temp_percent%>% 
+  ggplot(., aes(x=hba1cNGSP_8c, group=interaction(edat2, grupIntervencio), fill=grupIntervencio)) + 
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
+      geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+        scale_y_continuous(limits=c(0,1),labels = scales::percent) +
+         labs(title="Grup per Edat", x ="hba1c<8%", y = "Percentatge")+
+          facet_grid(~edat2) 
+#---------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+
+
+```
+
+
+
+
+
+
+## 3. Analisis de l'outcome (Change from baseline in HbA1c)
+
+### 3.1 Cluster per grup
+
+```{r Resultats4, include=T, results='asis'}
 #cluster:[]
 
 
@@ -334,61 +494,15 @@ table1::table1(~ centre_id  | grupIntervencio,
 
 ```
 
+### 3.2 t-test Diferencia de mitjanes entre Basal i Final, dins de cada grup
 
-
-## 3. Analisis de l'outcome (Change from baseline in HbA1c)
-
-### 3.1 t-test Diferencia de mitjanes entre Basal i Final, dins de cada grup
-
-```{r Resultats2, include=T, results='asis'}
+```{r Resultats5, include=T, results='asis'}
 #dades_BASAL_lab %>% select(hba1cNGSP)
 
 #dades_final
 #dades_MES03
 #dades_MES06
 
-
-
-
-
-dt_temp<-
-  dades %>% 
-  select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>% 
-  arrange(pacient_id) %>% 
-  na.omit()
-
-
-#dt_temp
-
-
-## Reg logistica incondicional
-
-dt_temp<-
-  dades_BASAL %>% 
-  left_join(
-    
-    dades %>% filter(tipus=="Mes12") %>% 
-      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
-    by="pacient_id"
-    
-  )
-
-dt_temp<-
-  dt_temp %>% 
-    mutate(hba1cNGSP_7=if_else(hba1cNGSP_final<7,1,0))
-
-dt_temp<-
-  dt_temp %>% 
-    mutate(hba1cNGSP_8=if_else(hba1cNGSP_final<8,1,0))
-
-dt_temp<-
-  dt_temp %>% 
-    mutate(Dif=hba1cNGSP_final-hba1cNGSP)
-
-
-
-dt_temp_s<-dt_temp%>%filter(grupIntervencio=="Sham")
-dt_temp_i<-dt_temp%>%filter(grupIntervencio=="Intervention")
 
 print("### t-test Diferencia de mitjanes entre Basal i Final,Grup Sham")
 
@@ -405,8 +519,8 @@ t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "tw
 #TAULA
 ```
 
-### 3.2 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
-```{r Resultats3, include=T}
+### 3.3 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
+```{r Resultats6, include=T}
 
 M12<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes12")
 M00<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes00")
@@ -438,11 +552,16 @@ table1::table1(~ hba1cNGSP,
 
 
 
+
 ```
 
-### 3.3 Regressio Lineal Mitjanes de Diferència hba1c
 
-```{r Resultats4, include=T}
+
+
+
+### 3.4 Regressio Lineal Mitjanes de Diferència hba1c
+
+```{r Resultats7, include=T}
 #-------------------------------------------------------------------------------------#
 print("Regressio Lineal Mitjanes de Diferència hba1c")
 
@@ -455,9 +574,9 @@ plot_model(kk)
 
 ```
 
-### 3.4 Regressio Lineal Mitjanes de Diferència hba1c amb Cluster.
+### 3.5 Regressio Lineal Mitjanes de Diferència hba1c amb Cluster.
 
-```{r Resultats5, include=T}
+```{r Resultats8, include=T}
 print("Regressio Lineal Mitjanes de Diferència hba1c amb CLUSTER (Id_Centre")
 #
 mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
@@ -466,9 +585,9 @@ summary(mod_lineal_cluster)
 ```
 
 
-### 3.5 Regressio Logística Incondicional hba1c<7%
+### 3.6 Regressio Logística Incondicional hba1c<7%
 
-```{r Resultats6, include=T}
+```{r Resultats9, include=T}
 #falta TOTAL,HDLC,LDLC [[BOGDAN]]???
 
 print("Regressio Logística Incondicional hba1c<7%")
@@ -484,9 +603,9 @@ ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+
 plot_model(ramo)
 ```
 
-### 3.6 Regressio Logística Condicional hba1c<7%
+### 3.7 Regressio Logística Condicional hba1c<7%
 
-```{r Resultats7, include=T}
+```{r Resultats10, include=T}
 
 print("Regressio Logística Condicional hba1c<7%")
 
@@ -517,97 +636,11 @@ taula_coef %>% bind_cols(coef) %>%
 
 
 ```
-### 3.7 Regressio Logística Condicional hba1c<7%
-
-```{r Resultats8, include=T}
-
-
-
-dt_temp_percent<-dt_temp%>%select(pacient_id,tipus,grupIntervencio,sexe_id,edat,hba1cNGSP_7,hba1cNGSP_8)%>%
-  arrange(pacient_id) %>% na.omit()
-
-
-print("Percentatge de hba1c<7% per Grup Intervenció /Grup Sham per Total/Sexe/edat")
-
-dt_temp_percent<-dt_temp_percent%>% mutate(sexe_id2=case_when(sexe_id=="Hombre"~"Home",sexe_id=="Mujer"~"Dona"))
-dt_temp_percent<-dt_temp_percent%>% mutate(edat2=case_when(edat<65~"<65 anys",edat>=65~">=65 anys"))
-
-
-# Basic barplot
-p0a<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_7)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=7% per Grup Intervenció /Grup Sham total", x ="hba1c>=7%", y = "Freqüència valors hba1c>=7%")+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p0a
-
-
-# Basic barplot
-p0b<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_8)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=8% per Grup Intervenció /Grup Sham total", x ="hba1c>=8%", y = "Freqüència valors hba1c>=8%")+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p0b
-
-
-
-# Basic barplot
-p1<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_7)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=7% per Grup Intervenció /Grup Sham per Sexe", x ="hba1c>=7%", y = "Freqüència valors hba1c>=7%")+
-          facet_grid(~sexe_id2)+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p1
 
 
 
 
-print("Percentatge de hba1c<8% per Grup Intervenció /Grup Sham per Total/Sexe/edat")
 
-# Basic barplot
-p2<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_7)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=7% per Grup Intervenció /Grup Sham per Edat", x ="hba1c>=7%", y = "Freqüència valors hba1c>=7%")+
-          facet_grid(~edat2)+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p2
-
-
-# Basic barplot
-p3<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_8)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=8% per Grup Intervenció /Grup Sham per Sexe", x ="hba1c>=8%", y = "Freqüència valors hba1c>=8%")+
-          facet_grid(~sexe_id2)+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p3
-
-
-
-
-print("Percentatge de hba1c<8% per Grup Intervenció /Grup Sham per Total/Sexe/edat")
-
-# Basic barplot
-p4<-ggplot(data=dt_temp_percent, aes(x=grupIntervencio, y=hba1cNGSP_8)) +
-     geom_bar(stat="identity", width=0.3,color="black")+
-      labs(title="Freqüència de hba1c>=8% per Grup Intervenció /Grup Sham per Edat", x ="hba1c>=8%", y = "Freqüència valors hba1c>=8%")+
-          facet_grid(~edat2)+
-            scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
-                     theme_classic()
-p4
-
-
-
-```
 
 ## 4. Salvar taula plana
 ```{r salvar}
