@@ -35,26 +35,20 @@ params:
 
 ## 0. Estat:
 
-**agregacions i part global descriptiva**
+**Lectures , Agregacions i Part Descriptiva**
+
+&check; Lectures. <br/>
+&check; Agregacions. <br/>
+&check; Part Descriptiva. <br/>
+
+Gener / 2022
+
+&check; Repàs Informe <br/>
 
 
-&check; 
-
-
-
- <br/>
-
-
-Desembre / 2021
-
-&check; xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx <br/>
-
-
-
- 
 **Pendents**
 
-&check; Revisio i depuracio errors.   <br/>
+&check; RevisiÓ i depuraciÓ errors.   <br/>
 
 # Fase de validacio de base
 
@@ -111,9 +105,15 @@ conductor<-here::here("Integra_Conductor.xls")
 dades<-readRDS(here::here(params$dir_dades_desti,"TAULA_PLANA.rds")) %>% as_tibble()
 
 dades_BASAL<-dades%>%filter(tipus=="Mes00")
-dades_MES03<-dades%>%filter(tipus=="Mes03")
-dades_MES06<-dades%>%filter(tipus=="Mes06")
+#dades_MES03<-dades%>%filter(tipus=="Mes03")
+#dades_MES06<-dades%>%filter(tipus=="Mes06")
 dades_FINAL<-dades%>%filter(tipus=="Mes12")
+
+
+#table(dades_BASAL$grupIntervencio)
+#table(dades_MES03$grupIntervencio)
+#table(dades_MES06$grupIntervencio)
+#table(dades_FINAL$grupIntervencio)
 
 
 
@@ -123,10 +123,9 @@ dades_FINAL<-dades%>%filter(tipus=="Mes12")
 
 
 
-dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
-#dades<-dades%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0))
+dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12 | is.na(hba1cNGSP),1,0))
 
-
+# ? Jordi.Real!
 
 #flow_chart1<-criteris_exclusio_diagrama(dt=dades_BASAL,
 #                                        taulavariables=conductor,
@@ -147,20 +146,16 @@ dades_BASAL<-dades_BASAL%>%mutate(exclusio1=ifelse(duracioDiabetesMesos2<12,1,0)
 #DT_VISITA_HISTORIC<-DT_VISITA_HISTORIC%>%filter(pacient_id%in%DT_PACIENT_SELECT$pacient_id)
 #mydata %>% filter(! is.na(important_a) | ! is.na(important_b))
 
-dades_BASAL<-dades_BASAL%>%filter(exclusio1==0 &  !is.na(hba1cNGSP))
 
+#FILTREM les exclusions!.
 
-
+dades_BASAL<-dades_BASAL%>%filter(exclusio1==0)
 #filtrem les altres base de dades!
-
-
 dades_BASAL_SELECT<-dades_BASAL%>%dplyr::select(pacient_id)
 
 
-dades_MES03<-dades_MES03%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
-dades_MES06<-dades_MES06%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
-dades_FINAL<-dades_FINAL%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
-dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+
+
 
 
 # fer el conductor dilluns 17.1.2022:
@@ -236,6 +231,41 @@ dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
 #[273] "duracioDiabetesAnys2"                       "Macro"                                      "Micro" 
 #
 #
+
+
+#table(dades_BASAL$grupIntervencio)
+#table(dades_MES03$grupIntervencio)
+#table(dades_MES06$grupIntervencio)
+#table(dades_FINAL$grupIntervencio)
+
+
+
+dades_BASAL<-etiquetar(d=dades_BASAL,taulavariables=conductor)
+dades_BASAL<-etiquetar_valors(dt=dades_BASAL,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+# CAmbiar categoria de referencia
+dades_BASAL<-dades_BASAL%>% refcat(conductor = conductor,ref = "refcat")
+#
+#
+dades_FINAL<-etiquetar(d=dades_FINAL,taulavariables=conductor)
+dades_FINAL<-etiquetar_valors(dt=dades_FINAL,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+# CAmbiar categoria de referencia
+dades_FINAL<-dades_FINAL%>% refcat(conductor = conductor,ref = "refcat")
+#
+#
+dades<-etiquetar(d=dades,taulavariables=conductor)
+dades<-etiquetar_valors(dt=dades,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
+# CAmbiar categoria de referencia
+dades<-dades%>% refcat(conductor = conductor,ref = "refcat")
+
+
+
+#dades_MES03<-dades_MES03%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+#dades_MES06<-dades_MES06%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+dades_FINAL<-dades_FINAL%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
+
+
+
 ```
 
 
@@ -244,57 +274,26 @@ dades<-dades%>%filter(pacient_id%in%dades_BASAL_SELECT$pacient_id)
 
 
 
-#dades_BASAL_lab<-convertir_dates(d=dades_BASAL,taulavariables=conductor)
-dades_BASAL<-etiquetar(d=dades_BASAL,taulavariables=conductor)
-dades_BASAL<-etiquetar_valors(dt=dades_BASAL,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
-
-
-# CAmbiar categoria de referencia
-dades_BASAL<-dades_BASAL%>% refcat(conductor = conductor,ref = "refcat")
-
-dades<-etiquetar(d=dades,taulavariables=conductor)
-dades<-etiquetar_valors(dt=dades,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta2")
-
-
-# CAmbiar categoria de referencia
-dades<-dades%>% refcat(conductor = conductor,ref = "refcat")
-
-                          #####################################
-                          #V  I S I T A       H I S T O R I C #------------------
-                          #####################################
-
-# 
-# #conductor_variables<-"Integra_Conductor.xls"
-# DT_VISITA_HISTORIC_lab<-convertir_dates(d=DT_VISITA_HISTORIC_FINAL,taulavariables=conductor)
-# DT_VISITA_HISTORIC_lab<-etiquetar(d=DT_VISITA_HISTORIC_lab,taulavariables=conductor)
-# DT_VISITA_HISTORIC_lab<-etiquetar_valors(dt=DT_VISITA_HISTORIC_lab,variables_factors=conductor,fulla="etiquetes0",camp_etiqueta="etiqueta1")
-
-
-#repàs Altres!
-
-#table(dades$cardiopatiaIsquemica_id)
-#table(dades$CARDIOPATIAISQUEMICABASAL_id_ALTRES)
-
-
-dt_temp<-
-  dades %>% 
-  select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>% 
-  arrange(pacient_id) %>% 
-  na.omit()
-
-
-#dt_temp
-
-
+                          
 ## Reg logistica incondicional
 
+
+
 dt_temp<-
-  dades_BASAL %>% 
-  left_join(
-      dades %>% filter(tipus=="Mes12") %>% 
-      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
-    by="pacient_id")
+  dades_FINAL %>% select(pacient_id,hba1cNGSP_final=hba1cNGSP)%>%
+  left_join(dades %>% filter(tipus=="Mes00") ,by="pacient_id")
+
+
+#dt_temp<-
+#  dades_BASAL %>% 
+#  left_join(
+#      dades %>% filter(tipus=="Mes12") %>% 
+#      select(pacient_id,hba1cNGSP_final=hba1cNGSP),
+#    by="pacient_id")
     
+
+table(dt_temp$grupIntervencio,dt_temp$tipus )
+
   
 
 dt_temp<-
@@ -308,6 +307,7 @@ dt_temp<-
 dt_temp<-
   dt_temp %>% 
     mutate(Dif=hba1cNGSP_final-hba1cNGSP)
+
 
 
 
@@ -331,8 +331,8 @@ dt_temp<-
 
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent<-dt_temp%>%select(pacient_id,tipus,grupIntervencio,sexe_id,edat,hba1cNGSP_7,hba1cNGSP_7c,hba1cNGSP_8,hba1cNGSP_8c)%>%
-  arrange(pacient_id) %>% na.omit()
-#
+  arrange(pacient_id) 
+#%>% na.omit()
 dt_temp_percent<-dt_temp_percent%>% mutate(sexe_id2=case_when(sexe_id=="Hombre"~"Home",sexe_id=="Mujer"~"Dona"))
 dt_temp_percent<-dt_temp_percent%>% mutate(edat2=case_when(edat<65~"<65 anys",edat>=65~">=65 anys"))
 #
@@ -349,7 +349,7 @@ dt_temp_percent<-dt_temp_percent%>% mutate(edat2=case_when(edat<65~"<65 anys",ed
 
 #formu_1<-formula_table1("taula",y="",taulavariables=conductor,dt=dades_basal)
 formu_2<-formula_table1("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
-formu_3<-formula_compare("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
+#formu_3<-formula_compare("taula_basal",y="grupIntervencio",taulavariables=conductor,dt=dades_BASAL)
 
 
 #table1::table1(formu_2,
@@ -385,33 +385,39 @@ table1::table1(formu_2,
 ```{r Resultats2, include=T}
 
 
+#table1::table1(~ hba1cNGSP_7c | grupIntervencio,
+#               data =dt_temp_percent,caption="",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+
+
 
 table1::table1(~ hba1cNGSP_7c | grupIntervencio,
                data =dt_temp_percent,caption="",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 #
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_7c, group=interaction( grupIntervencio), fill=grupIntervencio)) + 
-   geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-    geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+   geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+    geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=3) +
      scale_y_continuous(limits=c(0,1),labels = scales::percent) +
         labs(title="Grup ", x ="hba1c<7%", y = "Percentatge")
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_7c, group=interaction(sexe_id2, grupIntervencio), fill=grupIntervencio)) + 
-    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+      geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=2) +
         scale_y_continuous(limits=c(0,1),labels = scales::percent)+
           labs(title="Grup per Sexe", x ="hba1c<7%", y = "Percentatge")+
             facet_grid(~sexe_id2) 
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_7c, group=interaction(edat2, grupIntervencio), fill=grupIntervencio)) + 
-    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+      geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=2) +
         scale_y_continuous(limits=c(0,1),labels = scales::percent) +
           labs(title="Grup per Edat", x ="hba1c<7%", y = "Percentatge")+
             facet_grid(~edat2) 
@@ -435,7 +441,6 @@ dt_temp_percent%>%
 table1::table1(~ hba1cNGSP_8c | grupIntervencio,
                data =dt_temp_percent,caption="",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
 
@@ -444,23 +449,23 @@ table1::table1(~ hba1cNGSP_8c | grupIntervencio,
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_8c, group=interaction( grupIntervencio), fill=grupIntervencio)) + 
-   geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-    geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+   geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+    geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=3) +
      scale_y_continuous(limits=c(0,1),labels = scales::percent) +
         labs(title="Grup ", x ="hba1c<8%", y = "Percentatge")
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_8c, group=interaction(sexe_id2, grupIntervencio), fill=grupIntervencio)) + 
-    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-      geom_text(aes(label=scales::percent(round(..prop..,4)),y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+      geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=2) +
         scale_y_continuous(limits=c(0,1),labels = scales::percent)+
           labs(title="Grup per Sexe", x ="hba1c<8%", y = "Percentatge")+
             facet_grid(~sexe_id2) 
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_8c, group=interaction(edat2, grupIntervencio), fill=grupIntervencio)) + 
-    geom_bar(aes(y=..prop..), stat="count", position=position_dodge()) +
-      geom_text(aes(label=scales::percent(round(..prop..,4)), y=..prop..), stat="count", vjust=-.5, position=position_dodge(.9)) +
+    geom_bar(aes(y=..prop..), stat="count", position=position_dodge(),width = 0.6) +
+      geom_text(aes(label=scales::percent(round(..prop..,3)), y=..prop..), stat="count", vjust=-1,hjust=.5,  position=position_dodge(.9),size=2) +
         scale_y_continuous(limits=c(0,1),labels = scales::percent) +
          labs(title="Grup per Edat", x ="hba1c<8%", y = "Percentatge")+
           facet_grid(~edat2) 
@@ -476,13 +481,13 @@ dt_temp_percent%>%
 
 
 
-## 3. Analisis de l'outcome (Change from baseline in HbA1c)
+## 3. Analisis de l'outcome 
 
 ### 3.1 Cluster per grup
 
-```{r Resultats4, include=T, results='asis'}
+```{r Resultats4, include=T }
 #cluster:[]
-
+#results='asis'
 
 #dades_BASAL_lab %>% select(centre_id)
 
@@ -494,129 +499,184 @@ table1::table1(~ centre_id  | grupIntervencio,
 
 ```
 
-### 3.2 t-test Diferencia de mitjanes entre Basal i Final, dins de cada grup
+### 3.2a t-test Diferencia de mitjanes entre Basal i Final, Grup Sham
 
-```{r Resultats5, include=T, results='asis'}
-#dades_BASAL_lab %>% select(hba1cNGSP)
-
-#dades_final
-#dades_MES03
-#dades_MES06
+```{r Resultats5, include=T}
 
 
-print("### t-test Diferencia de mitjanes entre Basal i Final,Grup Sham")
-
-mean(dt_temp_s$Dif, na.rm=TRUE)
 t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
 
-print("### t-test Diferencia de mitjanes entre Basal i Final,Grup Intervention")
-
-
-mean(dt_temp_i$Dif, na.rm=TRUE)
-t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
-
-
-#TAULA
 ```
 
-### 3.3 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
+### 3.2b t-test Diferencia de mitjanes entre Basal i Final, Grup Intervention
+
 ```{r Resultats6, include=T}
+t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
+
+```
+
+
+### 3.3 Mitjanes (sd) hba1c (Basal ,Final) per cada Grup [Grup Intervenció i Grup Sham] 
+
+```{r Resultats7, include=T}
 
 M12<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes12")
 M00<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%filter(tipus=="Mes00")
+#
+kk<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP)%>%filter(tipus=="Mes00" | tipus=="Mes12")
+
+#table1::table1(~ centre_id  | grupIntervencio,
+#               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL:#cluster:[]",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
 
 
-table1::table1(~ hba1cNGSP,
-               data = M00%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
-table1::table1(~ hba1cNGSP,
-               data = M12%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
-
-
-
-table1::table1(~ hba1cNGSP,
-               data = M00%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
-               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-               render.categorical="FREQ (PCTnoNA%)",
-               topclass="Rtable1-zebra")
-table1::table1(~ hba1cNGSP,
-               data = M12%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
+table1::table1(~ hba1cNGSP | grupIntervencio*tipus,
+               data = kk,caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
-
-
+###############################################################################################################################################
+#table1::table1(~ hba1cNGSP,
+#               data = M00%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+#table1::table1(~ hba1cNGSP,
+#               data = M12%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+#table1::table1(~ hba1cNGSP,
+#               data = M00%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+#table1::table1(~ hba1cNGSP,
+#               data = M12%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
+#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
+#               render.categorical="FREQ (PCTnoNA%)",
+#               topclass="Rtable1-zebra")
+###############################################################################################################################################
 
 ```
 
-
-
-
-
-### 3.4 Regressio Lineal Mitjanes de Diferència hba1c
-
-```{r Resultats7, include=T}
-#-------------------------------------------------------------------------------------#
-print("Regressio Lineal Mitjanes de Diferència hba1c")
-
-#devtools::install_github("strengejacke/sjPlot")
-
-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>%parameters::parameters(exp=F)
-
-kk<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
-plot_model(kk)
-
-```
-
-### 3.5 Regressio Lineal Mitjanes de Diferència hba1c amb Cluster.
+## 3.4 Regressio Lineal Mitjana de la Diferència hba1cFinal-hba1cBasal.
 
 ```{r Resultats8, include=T}
-print("Regressio Lineal Mitjanes de Diferència hba1c amb CLUSTER (Id_Centre")
-#
-mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
-summary(mod_lineal_cluster)
+
+#devtools::install_github("strengejacke/sjPlot")
+#glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)%>%parameters::parameters(exp=F)
+
+mod_lineal<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
+coef<-(confint(mod_lineal)) %>% row.names()
+taula_coef<-exp(confint(mod_lineal)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols((coef(mod_lineal))) %>% 
+  select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  kable(caption="Regressio Lineal Mitjanes de Diferència hba1c",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+plot_model(mod_lineal)
 
 ```
 
+### 3.5 Regressio Lineal Mitjana de la Diferència hba1cFinal-hba1cBasal  amb Cluster.
+
+```{r Resultats9, include=T}
+
+mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , cluster="centre_id", family="gaussian")
+
+### Taula de coeficients
+
+coef<-(confint(mod_lineal_cluster)) %>% row.names()
+taula_coef<-exp(confint(mod_lineal_cluster)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols((coef(mod_lineal_cluster))) %>% 
+  select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  kable(caption="Regressio Lineal Mitjanes de Diferència hba1c amb Cluster",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+```
 
 ### 3.6 Regressio Logística Incondicional hba1c<7%
 
-```{r Resultats9, include=T}
-#falta TOTAL,HDLC,LDLC [[BOGDAN]]???
-
-print("Regressio Logística Incondicional hba1c<7%")
-
-
-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>% 
-  parameters::parameters(exp=T)
-
-
+```{r Resultats10, include=T}
+#glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id+ duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>% parameters::parameters(exp=T) 
 
 ramo<-glm(hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) 
-#print(forest_model(ramo,factor_separate_line = TRUE))
+
+coef<-exp(confint(ramo)) %>% row.names()
+
+taula_coef=exp(confint(ramo)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols(exp(coef(ramo))) %>% 
+  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  filter(var!="(Intercept)") %>% 
+  kable(caption="Regressio Logística Incondicional hba1c<7%",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+
+
 plot_model(ramo)
+
 ```
 
-### 3.7 Regressio Logística Condicional hba1c<7%
+### 3.7 Regressio Logística Incondicional hba1c<8%
 
-```{r Resultats10, include=T}
+```{r Resultats11, include=T}
+#glm(hba1cNGSP_8~grupIntervencio+edat+sexe_id+ duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) %>%parameters::parameters(exp=T)
 
-print("Regressio Logística Condicional hba1c<7%")
+ramo<-glm(hba1cNGSP_8~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro ,family = "binomial",data = dt_temp) 
 
+coef<-exp(confint(ramo)) %>% row.names()
+
+taula_coef=exp(confint(ramo)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols(exp(coef(ramo))) %>% 
+  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  filter(var!="(Intercept)") %>% 
+  kable(caption="Regressio Logística Incondicional hba1c<8%",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+
+
+plot_model(ramo)
+
+```
+
+### 3.8 Regressio Logística Condicional hba1c<7%
+
+```{r Resultats12, include=T}
 
 mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_7~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
 
-summary(mod_cluster)
+coef<-exp(confint(mod_cluster)) %>% row.names()
+
+taula_coef=exp(confint(mod_cluster)) %>% as_tibble()
+
+taula_coef %>% bind_cols(coef) %>% 
+  bind_cols(exp(coef(mod_cluster))) %>% 
+  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+  filter(var!="(Intercept)") %>% 
+  kable(caption="Reg logistica Condicional",digits = 2) %>% 
+  kableExtra::kable_classic_2()
+
+```
+
+### 3.9 Regressio Logística Condicional hba1c<8%
+
+```{r Resultats13, include=T}
 
 
 
-### Taula de coeficients
+mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_8~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
 
 coef<-exp(confint(mod_cluster)) %>% row.names()
 
@@ -631,11 +691,12 @@ taula_coef %>% bind_cols(coef) %>%
 
 
 
-#a <- mod_cluster$glm_res[1]
-#b <- mod_cluster$estimate[2]
 
 
 ```
+
+
+
 
 
 
