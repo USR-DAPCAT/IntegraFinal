@@ -455,7 +455,7 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
 
 #macro segun excel columnas:
 
-#arteriopatiaPeriferica_id
+#arteriopatiaPeriferica_id  NO!
 #cardiopatiaIsquemica_id
 #insuficienciaCardiaca_id
 #malaltiaCerebrovascular_id
@@ -467,6 +467,9 @@ TAULA_PLANA<-TAULA_PLANA %>% mutate(
 #neuropatiaDiabetica_id
 #retinopatiaDiabetica_id
 
+
+# He posat aquesta variable:
+#CARDIOPATIAISQUEMICABASAL_id_ALTRES ???
 
 
 TAULA_PLANA<-TAULA_PLANA%>%mutate(Macro=ifelse((  CARDIOPATIAISQUEMICABASAL_id_ALTRES=="Si" | 

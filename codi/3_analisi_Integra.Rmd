@@ -35,7 +35,7 @@ params:
 
 ## 0. Estat:
 
-**Lectures , Agregacions i Part Descriptiva**
+**Lectures , Agregacions , Part Descriptiva , Models Lineals i Logistics com l'Article**
 
 &check; Lectures. <br/>
 &check; Agregacions. <br/>
@@ -48,13 +48,17 @@ Gener / 2022
 
 **Pendents**
 
-&check; Revisió i depuració errors.Diferències amb Model Article:   <br/>
+*Revisió i depuració errors.Diferències amb Model Article:*
 
-&check; Tensio Diastolica i Tensió Sistolica,el Grup Sham és Internetion, i a l'inrevés.    <br/>
-&check; Falta Lifestyle measures    <br/>
-&check; A la "Figure 2.Percentatge of patients in each... the target HbA1c <8 " és diferent!    <br/>
-&check; Regressio Lineal Mitjana de la Diferència hba1cFinal-hba1cBasal  amb Cluster és diferent! article:-0.6, R-markdown:-0.65      <br/>
-&check; A la "Figure 3.Logistic regression model..." els paràmetres MICRO,MACRO diferents.    <br/>
+&cross; Hipertensió,Hiperlipidèmia,Arteriopatia Periferica,Insuficiencia Cardiaca,Cardiopatia Isquemica,: missing+NO-->NO    <br/>
+&cross; Malaltia Cerebrovascular,Nefropatia Diabetica,Neuropatia Diabetica,Retinopatia Diabetica: missing+NO-->NO    <br/>
+&cross; MACRO=Cardiopatia Isquemica+Insuficiencia Cardiaca+ Malaltia Cerebrovascular    <br/>
+&cross; MICRO=Neuropatia Diabetica+Nefropatia Diabetica+Retinopatia Diabetica    <br/>
+&cross; Tensio Diastolica i Tensió Sistolica,el Grup Sham és Internetion, i a l'inrevés.    <br/>
+&cross; Falta Lifestyle measures    <br/>
+&cross; A la "Figure 2.Percentatge of patients in each... the target HbA1c <8 " és diferent!    <br/>
+&cross; Regressio Lineal Mitjana de la Diferència hba1cFinal-hba1cBasal  amb Cluster és diferent! article:-0.6, R-markdown:-0.65      <br/>
+&cross; A la "Figure 3.Logistic regression model..." els paràmetres MICRO,MACRO diferents.    <br/>
 
 
 # Fase de validació de base
@@ -405,7 +409,7 @@ table1::table1(~ hba1cNGSP_7c | grupIntervencio,
                data =dt_temp_percent,caption="",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                topclass="Rtable1-zebra")
-#
+
 #---------------------------------------------------------------------------------------------------------------------------------------------#
 dt_temp_percent%>% 
   ggplot(., aes(x=hba1cNGSP_7c, group=interaction( grupIntervencio), fill=grupIntervencio)) + 
@@ -564,13 +568,21 @@ mod_lineal<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
 coef<-(confint(mod_lineal)) %>% row.names()
 taula_coef<-(confint(mod_lineal)) %>% as_tibble()
 
-taula_coef %>% bind_cols(coef) %>% 
-  bind_cols((coef(mod_lineal))) %>% 
-  select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
-  kable(caption="Regressió lineal diferència mitjana ajustada per l'HbA1c basal",digits = 2) %>% 
-  kableExtra::kable_classic_2()
+#taula_coef %>% bind_cols(coef) %>% 
+#  bind_cols((coef(mod_lineal))) %>% 
+#  select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+#  kable(caption="Regressió lineal diferència mitjana ajustada per l'HbA1c basal",digits = 2) %>% 
+#  kableExtra::kable_classic_2()
+
+
+
+
+mod_lineal%>%sjPlot::tab_model(digits=3, show.intercept = TRUE,dv.labels = c("Model Lineal"),
+                    title = "Regressió lineal diferència mitjana ajustada per l'HbA1c basal",
+                    p.style = "numeric_stars")
 
 plot_model(mod_lineal)
+
 
 ```
 
