@@ -48,11 +48,18 @@ Gener / 2022
 
 **Pendents**
 
-&check; RevisiÓ i depuraciÓ errors.   <br/>
+&check; Revisió i depuració errors.Diferències amb Model Article:   <br/>
 
-# Fase de validacio de base
+&check; Tensio Diastolica i Tensió Sistolica,el Grup Sham és Internetion, i a l'inrevés.    <br/>
+&check; Falta Lifestyle measures    <br/>
+&check; A la "Figure 2.Percentatge of patients in each... the target HbA1c <8 " és diferent!    <br/>
+&check; Regressio Lineal Mitjana de la Diferència hba1cFinal-hba1cBasal  amb Cluster és diferent! article:-0.6, R-markdown:-0.65      <br/>
+&check; A la "Figure 3.Logistic regression model..." els paràmetres MICRO,MACRO diferents.    <br/>
 
-## Fase Preparacio
+
+# Fase de validació de base
+
+## Fase Preparació
 
 
 ```{r setup, include = FALSE}
@@ -80,6 +87,7 @@ library("sjmisc")
 library("devtools")
 library("sjPlot")
 library("jtools")
+library("broom")
 
 # Funcions 
 link_source<-paste0("https://github.com/jrealgatius/Stat_codis/blob/master/funcions_propies.R","?raw=T")
@@ -504,14 +512,22 @@ table1::table1(~ centre_id  | grupIntervencio,
 ```{r Resultats5, include=T}
 
 
-t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
+ t.test(y = dt_temp_s$hba1cNGSP, x = dt_temp_s$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)%>% 
+  sjPlot::tab_model(digits=3,title = "t-test Diferencia de mitjanes entre Basal i Final, Grup Sham",p.style = "numeric_stars")
+
+
+
 
 ```
 
 ### 3.2b t-test Diferencia de mitjanes entre Basal i Final, Grup Intervention
 
 ```{r Resultats6, include=T}
-t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)
+
+t.test(y = dt_temp_i$hba1cNGSP, x = dt_temp_i$hba1cNGSP_final, alternative = "two.sided", mu = 0, paired = TRUE, conf.level = 0.95)%>% 
+  sjPlot::tab_model(digits=3,title = "t-test Diferencia de mitjanes entre Basal i Final, Grup Intervention",p.style = "numeric_stars")
+
+
 
 ```
 
@@ -525,41 +541,15 @@ M00<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP) %>%fi
 #
 kk<-dades %>%select(pacient_id,tipus,grupIntervencio,centre_id,hba1cNGSP)%>%filter(tipus=="Mes00" | tipus=="Mes12")
 
-#table1::table1(~ centre_id  | grupIntervencio,
-#               data = dades_BASAL,caption="TAULA 1.Descriptiva BASAL:#cluster:[]",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
 
 
-table1::table1(~ hba1cNGSP | grupIntervencio*tipus,
+table1::table1(~ hba1cNGSP | grupIntervencio*tipus, overall=F,
                data = kk,caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
                render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
                render.categorical="FREQ (PCTnoNA%)",
                topclass="Rtable1-zebra")
 
-###############################################################################################################################################
-#table1::table1(~ hba1cNGSP,
-#               data = M00%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes Glicada Basal",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
-#table1::table1(~ hba1cNGSP,
-#               data = M12%>%filter(grupIntervencio=="Intervention"),caption="Grup Intervenció.Interval Confiança Mitjanes  Glicada Final",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
-#table1::table1(~ hba1cNGSP,
-#               data = M00%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes Glicada Basal",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
-#table1::table1(~ hba1cNGSP,
-#               data = M12%>%filter(grupIntervencio=="Sham"),caption="Grup Sham.Interval Confiança Mitjanes  Glicada Final",
-#               render.continuous=c(.="N",.="Mean (SD)", .="Median [Min, Max]"),
-#               render.categorical="FREQ (PCTnoNA%)",
-#               topclass="Rtable1-zebra")
-###############################################################################################################################################
+
 
 ```
 
@@ -572,12 +562,12 @@ table1::table1(~ hba1cNGSP | grupIntervencio*tipus,
 
 mod_lineal<-glm(Dif~hba1cNGSP        ,family = "gaussian",data = dt_temp)
 coef<-(confint(mod_lineal)) %>% row.names()
-taula_coef<-exp(confint(mod_lineal)) %>% as_tibble()
+taula_coef<-(confint(mod_lineal)) %>% as_tibble()
 
 taula_coef %>% bind_cols(coef) %>% 
   bind_cols((coef(mod_lineal))) %>% 
   select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
-  kable(caption="Regressio Lineal Mitjanes de Diferència hba1c",digits = 2) %>% 
+  kable(caption="Regressió lineal diferència mitjana ajustada per l'HbA1c basal",digits = 2) %>% 
   kableExtra::kable_classic_2()
 
 plot_model(mod_lineal)
@@ -593,12 +583,12 @@ mod_lineal_cluster<-miceadds::glm.cluster(data=dt_temp, formula=Dif~hba1cNGSP , 
 ### Taula de coeficients
 
 coef<-(confint(mod_lineal_cluster)) %>% row.names()
-taula_coef<-exp(confint(mod_lineal_cluster)) %>% as_tibble()
+taula_coef<-(confint(mod_lineal_cluster)) %>% as_tibble()
 
 taula_coef %>% bind_cols(coef) %>% 
   bind_cols((coef(mod_lineal_cluster))) %>% 
   select(var="...3",Coef="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
-  kable(caption="Regressio Lineal Mitjanes de Diferència hba1c amb Cluster",digits = 2) %>% 
+  kable(caption="Regressió lineal diferència mitjana ajustada per l'HbA1c basal amb Cluster",digits = 2) %>% 
   kableExtra::kable_classic_2()
 
 ```
@@ -621,6 +611,13 @@ taula_coef %>% bind_cols(coef) %>%
   kable(caption="Regressio Logística Incondicional hba1c<7%",digits = 2) %>% 
   kableExtra::kable_classic_2()
 
+
+c("ajuste1") %>% 
+  map(~formula.text(.x,"hba1cNGSP_7",taulavariables = conductor,dt=dt_temp))%>% 
+  map(~glm(.x,data = dt_temp, family = "binomial")) %>% 
+  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("M1"),
+                    title = "Regressio Logística Incondicional hba1c<7%",
+                    p.style = "numeric_stars")
 
 
 plot_model(ramo)
@@ -647,7 +644,30 @@ taula_coef %>% bind_cols(coef) %>%
 
 
 
+c("ajuste1") %>% 
+  map(~formula.text(.x,"hba1cNGSP_8",taulavariables = conductor,dt=dt_temp))%>% 
+  map(~glm(.x,data = dt_temp, family = "binomial")) %>% 
+  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("M1"),
+                    title = "Regressio Logística Incondicional hba1c<8%",
+                    p.style = "numeric_stars")
+
+
+
+
+
 plot_model(ramo)
+
+
+
+
+#c("ajuste1","ajuste2") %>% 
+#  map(~formula.text(.x,"hba1cNGSP_7",taulavariables = conductor,dt=dt_temp))%>% 
+#  map(~glm(.x,data = dt_temp, family = "binomial")) %>% 
+#  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("M1", "M2"),
+#                    title = "Mortality models",
+#                    p.style = "numeric_stars")
+
+
 
 ```
 
@@ -668,13 +688,20 @@ taula_coef %>% bind_cols(coef) %>%
   kable(caption="Reg logistica Condicional",digits = 2) %>% 
   kableExtra::kable_classic_2()
 
+
+#c("ajuste1") %>% 
+#  map(~formula.text(.x,"hba1cNGSP_7",taulavariables = conductor,dt=dt_temp))%>% 
+#  map(~miceadds::glm.cluster(.x,data = dt_temp,cluster="centre_id", family = "binomial")) 
+
+
+
+
+
 ```
 
 ### 3.9 Regressio Logística Condicional hba1c<8%
 
 ```{r Resultats13, include=T}
-
-
 
 mod_cluster<-miceadds::glm.cluster(data=dt_temp, formula=hba1cNGSP_8~grupIntervencio+edat+sexe_id + duracioDiabetesAnys+hta_id+dislipemia_id +imc+Micro+Macro, cluster="centre_id", family="binomial")
 
@@ -690,20 +717,19 @@ taula_coef %>% bind_cols(coef) %>%
   kableExtra::kable_classic_2()
 
 
+#tab_model(mod_cluster, vcov.fun = "CL", vcov.type = "HC1", show.se = TRUE)
+
+#c("ajuste1") %>% 
+#  map(~formula.text(.x,"hba1cNGSP_8",taulavariables = conductor,dt=dt_temp))%>% 
+#  map(~miceadds::glm.cluster(.x,data = dt_temp,cluster="centre_id", family = "binomial")) 
 
 
 
 ```
 
 
-
-
-
-
-
-
-
 ## 4. Salvar taula plana
+
 ```{r salvar}
 #saveRDS(dades, file=here::here(params$dir_dades_desti,"dt_plana_exc.rds"))
 
