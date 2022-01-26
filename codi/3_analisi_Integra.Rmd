@@ -659,7 +659,7 @@ taula_coef %>% bind_cols(coef) %>%
 c("ajuste1") %>% 
   map(~formula.text(.x,"hba1cNGSP_8",taulavariables = conductor,dt=dt_temp))%>% 
   map(~glm(.x,data = dt_temp, family = "binomial")) %>% 
-  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("M1"),
+  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("Regressio Logística Incondicional"),
                     title = "Regressio Logística Incondicional hba1c<8%",
                     p.style = "numeric_stars")
 
