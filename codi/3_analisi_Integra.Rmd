@@ -616,18 +616,18 @@ coef<-exp(confint(ramo)) %>% row.names()
 
 taula_coef=exp(confint(ramo)) %>% as_tibble()
 
-taula_coef %>% bind_cols(coef) %>% 
-  bind_cols(exp(coef(ramo))) %>% 
-  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
-  filter(var!="(Intercept)") %>% 
-  kable(caption="Regressio Logística Incondicional hba1c<7%",digits = 2) %>% 
-  kableExtra::kable_classic_2()
+#taula_coef %>% bind_cols(coef) %>% 
+#  bind_cols(exp(coef(ramo))) %>% 
+#  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+#  filter(var!="(Intercept)") %>% 
+#  kable(caption="Regressio Logística Incondicional hba1c<7%",digits = 2) %>% 
+#  kableExtra::kable_classic_2()
 
 
 c("ajuste1") %>% 
   map(~formula.text(.x,"hba1cNGSP_7",taulavariables = conductor,dt=dt_temp))%>% 
   map(~glm(.x,data = dt_temp, family = "binomial")) %>% 
-  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("M1"),
+  sjPlot::tab_model(digits=3, show.intercept = F,dv.labels = c("Regressio Logística Incondicional "),
                     title = "Regressio Logística Incondicional hba1c<7%",
                     p.style = "numeric_stars")
 
@@ -647,12 +647,12 @@ coef<-exp(confint(ramo)) %>% row.names()
 
 taula_coef=exp(confint(ramo)) %>% as_tibble()
 
-taula_coef %>% bind_cols(coef) %>% 
-  bind_cols(exp(coef(ramo))) %>% 
-  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
-  filter(var!="(Intercept)") %>% 
-  kable(caption="Regressio Logística Incondicional hba1c<8%",digits = 2) %>% 
-  kableExtra::kable_classic_2()
+#taula_coef %>% bind_cols(coef) %>% 
+#  bind_cols(exp(coef(ramo))) %>% 
+#  select(var="...3",OR="...4",IC95_linf="2.5 %",IC95_lsup="97.5 %") %>%
+#  filter(var!="(Intercept)") %>% 
+#  kable(caption="Regressio Logística Incondicional hba1c<8%",digits = 2) %>% 
+#  kableExtra::kable_classic_2()
 
 
 
